@@ -3,9 +3,7 @@ package disko;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class DB {
     private BufferedReader br;
@@ -64,7 +62,7 @@ public class DB {
         konexioa.close();
     }
 
-    private void aukeraIrakurri(int aukera){
+    private void aukeraIrakurri(int aukera) throws IOException,SQLException{
         switch (aukera){
             case 1:
                 taldeakSartu();
@@ -172,8 +170,18 @@ public class DB {
 
     }
 
-    private void diskoarenAbestiak(){
-
+    private void diskoarenAbestiak() throws IOException,SQLException{
+        System.out.println("Sartu taldearen izena:\n");
+        String taldeIzen = br.readLine();
+        System.out.println("Sartu " + taldeIzen + " taldearen diskoaren izena:");
+        String diskoIzen = br.readLine();
+        PreparedStatement ps = konexioa.prepareStatement("SELECT DISKO.Kodea, DISKO.Izena, ABESTIA.* FROM TALDE, DISKO, ABESTIA WHERE TALDE.kodea = DISKO.TaldeK AND DISKO.Kodea = ABESTIA.DiskoK AND DISKO.izena = ? AND TALDE.Izena = ?");
+        ps.setString(1,diskoIzen);
+        ps.setString(2,taldeIzen);
+        ResultSet rs = ps.executeQuery();
+        while(rs.next()){
+            System.out.println(rs.getString(1) + " " + rs.getString(2) + " " + rs.getString(3));
+        }
     }
 
     private void diskoenPrezioa(){
