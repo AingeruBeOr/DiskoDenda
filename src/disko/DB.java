@@ -130,8 +130,36 @@ public class DB {
         }
     }
 
-    private void taldeakSartu(){
-
+    private void taldeakSartu() throws SQLException, IOException, NumberFormatException{
+    	//TODO NONDIK ATERA PRODUKTOREA?
+    	Statement st =konexioa.createStatement();
+    	//Taldea sartzeko:
+    	System.out.println("Sartu taldearen izena: ");
+    	String izena= br.readLine();
+		System.out.println("Sartu taldearen kodea: ");
+		int kode=Integer.parseInt(br.readLine());
+		System.out.println("Sartu produktorearen kodea:");
+		int pKode=Integer.parseInt(br.readLine());
+		String query="insert into talde values('"+izena+"',"+kode+","+pKode+")";
+		System.out.println(query);
+		st.executeUpdate(query);
+		//Partaideak sartzeko:
+		boolean jarraitu=true;
+		String pIzen;
+		int partKode;
+		String hizki;
+		do {
+			System.out.println("Sartu partaidearen izena: ");
+	    	pIzen= br.readLine();
+			System.out.println("Sartu partaidearen kodea: ");
+			partKode=Integer.parseInt(br.readLine());
+			query="insert into partaidea values('"+pIzen+"',"+partKode+","+kode+")";
+			System.out.println(query);
+			st.executeUpdate(query);
+			System.out.println("Gelditzeko sakatu 'G', bestela beste tekla sakatu.");
+			hizki=br.readLine();
+			if(hizki.equalsIgnoreCase("G")) {jarraitu=false;}
+		}while(jarraitu);
     }
 
     private void diskoBerriaSartu(){
@@ -142,8 +170,27 @@ public class DB {
 
     }
 
-    private void girarenHiriakSartu(){
-
+    private void girarenHiriakSartu() throws SQLException, IOException, NumberFormatException{
+    	//TODO igual habria q poner a que gira pertenece cada ciudad como si fuese identitate ahula?
+    	Statement st =konexioa.createStatement();
+    	boolean jarraitu=true;
+		String herrialde;
+		String hiriIzen;
+		String hizki;
+		String query;
+		
+		do {
+			System.out.println("Sartu herrialdearen izena: ");
+	    	herrialde= br.readLine();
+	    	System.out.println("Sartu hiriaren izena: ");
+	    	hiriIzen= br.readLine();
+	    	query="insert into hiria values('"+herrialde+"','"+hiriIzen+"')";
+			System.out.println(query);
+			st.executeUpdate(query);
+			System.out.println("Gelditzeko sakatu 'G', bestela beste tekla sakatu.");
+			hizki=br.readLine();
+			if(hizki.equalsIgnoreCase("G")) {jarraitu=false;}
+		}while(jarraitu);
     }
 
     private void sarrerakEguneratu(){
