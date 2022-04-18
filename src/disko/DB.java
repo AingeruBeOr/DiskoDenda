@@ -196,9 +196,37 @@ public class DB {
     private void sarrerakEguneratu(){
 
     }
-
-    private void girarenBukHasDatakAldatu(){
-
+    
+    /**
+     * Gira bateko datetan arazoak egonda hauek aldatuko dira:
+     * @throws IOException
+     * @throws SQLException
+     * @throws NumberFormatException
+     */
+    private void girarenBukHasDatakAldatu()throws SQLException, NumberFormatException, IOException{
+    	Statement st =konexioa.createStatement();
+    	System.out.println("Aldatu nahi duzun girak egiten duen taldearen KODEA adierazi: ");
+    	int kodea= Integer.parseInt(br.readLine());
+    	System.out.println("Sartu zein den aldatu nahi duzun giraren hasiera data (XXXX-XX-XX formatuan): ");
+		String data=br.readLine();
+    	String dataB;
+    	String query;
+    	System.out.println("Hasiera data aldatu nahi duzu? Hala bada sakatu 'B' hizkia, bestela sakatu beste bat.");
+    	if(br.readLine().equalsIgnoreCase("B")) {
+    		System.out.println("Sartu hasiera data berria (XXXX-XX-XX formatuan): ");
+    		dataB=br.readLine();
+    		query="update gira set HasData='"+dataB+"' where TaldeK="+kodea+" and HasData='"+data+"'";
+    		System.out.println(query);
+			st.executeUpdate(query);
+    	}
+    	System.out.println("Bukaera data aldatu nahi duzu? Hala bada sakatu 'B' hizkia, bestela sakatu beste bat.");
+    	if(br.readLine().equalsIgnoreCase("B")) {
+    		System.out.println("Sartu bukaera data berria (XXXX-XX-XX formatuan): ");
+    		dataB=br.readLine();
+    		query="update gira set BukData='"+dataB+"' where TaldeK="+kodea+" and HasData='"+data+"'";
+    		System.out.println(query);
+			st.executeUpdate(query);
+    	}
     }
 
     private void taldeKaleratu(){
