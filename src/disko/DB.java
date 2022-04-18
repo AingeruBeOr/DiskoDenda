@@ -241,9 +241,32 @@ public class DB {
 
     }
 
-    private void girarenHiriak(){
-
+    /**
+     * Gira baten hiri guztiak hauek duten sarreren prezioarekin.
+     * Horretatrako,
+     * @throws IOException
+     * @throws SQLException
+     */
+    private void girarenHiriak() throws SQLException, IOException{		
+    	System.out.println("Sartu taldearen izena:");
+        String taldeIzen = br.readLine();
+        System.out.println("Sartu zein den "+taldeIzen+" taldetik ikusi nahi duzun giraren hasiera data (XXXX-XX-XX formatuan): ");
+		String data=br.readLine();
+        PreparedStatement ps = konexioa.prepareStatement(
+                "SELECT HIRIA.Izena, LEKUA.Izena, LEKUA.Prezioa " +
+                "FROM HIRIA, LEKUA, TALDE, GIRA " +
+                "WHERE TALDE.kodea = GIRA.TaldeK AND " +
+                        "GIRA.hasData = ? AND " +
+                        "TALDE.izena = '\"+taldeIzen+\"' AND " +
+                        "TALDE.Izena = ?");
+        ps.setString(1,data);
+        ps.setString(2,taldeIzen);
+        ResultSet rs = ps.executeQuery();
+        while(rs.next()){
+            System.out.println(rs.getString(1) + " " + rs.getString(2) + " " + rs.getString(3));
+        }
     }
+
 
     /**
      * Disko baten abesti guztiak erakutsiko dira.
@@ -274,8 +297,27 @@ public class DB {
     private void diskoenPrezioa(){
 
     }
-
-    private void taldeProduktoreBera(){
+    /**
+     * Talde baten produktore bera erabiltzen duten taldeak.
+     * Horretarako, taldearen izena adieraziko da.
+     * @throws IOException
+     * @throws SQLException
+     */
+    private void taldeProduktoreBera()throws IOException,SQLException{
+        System.out.println("Sartu taldearen izena:");
+        String taldeIzen = br.readLine();
+        PreparedStatement ps = konexioa.prepareStatement(
+                "SELECT TALDE.Izena " +
+                "FROM TALDE, PRODUKTOREA " +
+                "WHERE TALDE.ProdKode IN " +
+                        "(SELECT TALDE.ProdKode " +
+                        "FROM TALDE " +
+                        "WHERE TALDE.izena= ?)");
+        ps.setString(1, taldeIzen);
+        ResultSet rs = ps.executeQuery();
+        while(rs.next()){
+            System.out.println(rs.getString(1));
+        }
 
     }
 
@@ -313,7 +355,28 @@ public class DB {
 
     }
 
-    private void giraHiriakOrdenatuta(){
+    private void giraHiriakOrdenatuta()throws SQLException, IOException{	
+    	//TODO No seria asi el select?
+    	System.out.println("Sartu taldearen izena:");
+        String taldeIzen = br.readLine();
+        System.out.println("Sartu zein den "+taldeIzen+" taldetik ikusi nahi duzun giraren hasiera data (XXXX-XX-XX formatuan): ");
+		String data=br.readLine();
+        PreparedStatement ps = konexioa.prepareStatement(
+                "SELECT HIRIA.Izena, LEKUA.Izena" +
+                "FROM HIRIA, LEKUA, TALDE, GIRA, HIRIAN_JO" +
+                "WHERE TALDE.kodea = GIRA.TaldeK AND " +
+                		"GIRA.TaldeK=HIRIAN_JO.TaldeK AND GIRA.hasData=HIRIAN_JO.hasData AND"+
+                		"HIRIA.Herrialdea=HIRIAN_JO.Herrialdea AND HIRIA.Izena=HIRIAN_JO.HiriIzena AND"+
+                		"HIRIA.Herrialdea=LEKUA.Herrialdea AND HIRIA.Izena=LEKUA.HiriIzena AND"+
+                        "GIRA.hasData = ? AND " +
+                        "TALDE.Izena = ?"+
+                        "ORDER BY HIRIA.Izena");
+        ps.setString(1,data);
+        ps.setString(2,taldeIzen);
+        ResultSet rs = ps.executeQuery();
+        while(rs.next()){
+            System.out.println(rs.getString(1) + " " + rs.getString(2));
+        }
 
     }
 
