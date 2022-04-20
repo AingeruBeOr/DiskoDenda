@@ -21,13 +21,14 @@ public class DB {
 
     private void konektatu(){
         try{
-            Class.forName("com.mysql.cj.jbdc.Driver");
-            String zerbitzaria = "jbdc:mysql://localhost:3306/XXX";
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            String zerbitzaria = "jdbc:mysql://localhost:3306/diskodenda";
             String erabiltzailea = "root";
             String pasahitza = "";
             konexioa = DriverManager.getConnection(zerbitzaria,erabiltzailea,pasahitza);
         }
         catch(Exception e){
+        	System.out.println("Errorea egon da datu basea kargatzean.");
             e.printStackTrace();
         }
     }
@@ -35,7 +36,14 @@ public class DB {
     private void menuErakutsi() throws NumberFormatException, IOException, SQLException{
         int aukera = -1;
         while(aukera!=0){
-            System.out.println("\n*********** Menua ********");
+            System.out.println("  __  __ ______ _   _ _    _         \r\n"
+            		+ " |  \\/  |  ____| \\ | | |  | |  /\\    \r\n"
+            		+ " | \\  / | |__  |  \\| | |  | | /  \\   \r\n"
+            		+ " | |\\/| |  __| | . ` | |  | |/ /\\ \\  \r\n"
+            		+ " | |  | | |____| |\\  | |__| / ____ \\ \r\n"
+            		+ " |_|  |_|______|_| \\_|\\____/_/    \\_\\\r\n"
+            		+ "                                     \r\n"
+            		+ "                                    ");
             System.out.println("1.- Talde berriak sartu.");
             System.out.println("2.- Disko berria sartu.");
             System.out.println("3.- Gira berriak sartu.");
@@ -54,8 +62,9 @@ public class DB {
             System.out.println("16.- Abestiak zenbakiaren arabera ordenatu.");
             System.out.println("17.- Hiriak izenaren arabera ordenatu.");
             System.out.println("18.- Talde batek hiri batean lortutako irabaziak.");
-            System.out.println("19.- 1000â‚¬ baino gehiago irabazi duten taldeak erakutsi.");
+            System.out.println("19.- 1000€ baino gehiago irabazi duten taldeak erakutsi.");
             System.out.println("0.- Irten");
+            System.out.println("\n\nAukera bat sartu: ");
             aukera = Integer.parseInt(br.readLine());
             aukeraIrakurri(aukera);
         }
@@ -130,6 +139,12 @@ public class DB {
         }
     }
 
+    /**
+     * Talde berri bat sartuko da datu-basean. Talde hori sartzen denean, hainbat partaide sartuko ahal dira talde horren barruan.
+     * @throws SQLException
+     * @throws IOException
+     * @throws NumberFormatException
+     */
     private void taldeakSartu() throws SQLException, IOException, NumberFormatException{
     	//TODO NONDIK ATERA PRODUKTOREA?
     	Statement st =konexioa.createStatement();
@@ -166,10 +181,35 @@ public class DB {
 
     }
 
-    private void giraBerriakSartu(){
-
+    /**
+     * Talde bati gira berri bat sartuko zaio. Behin gira hori sartu dela, gira horren barruan hiriak eta lekuak sartu nahi diren eskatuko da.
+     * Hiri eta leku berriak sartu nahi badira, "girarenHiriakSartu" metodoari dei egingo zaio.
+     * @throws SQLException 
+     * @throws IOException
+     */
+    private void giraBerriakSartu() throws SQLException, IOException{
+    	System.out.println("Sartu gira berriaren hasiera data (UUUU-HH-EE formatuan): ");
+    	String hasData = br.readLine();
+    	System.out.println("Sartu gira berriaren bukaera data (UUUU-HH-EE formatuan): ");
+    	String bukData = br.readLine();
+    	System.out.println("Sartu gira horren taldea: ");
+    	String taldeKode = br.readLine();
+    	PreparedStatement ps = konexioa.prepareStatement("INSERT INTO GIRA VALUES(?, ?, ?)");
+    	ps.setString(1,bukData);
+    	ps.setString(2,hasData);
+    	ps.setString(3,taldeKode);
+    	ps.executeUpdate();
+    	System.out.println("Sartu berri duzun gira horretan hiri eta leku berriak sartu nahi dituzu? (B/E)");
+    	String erantzun = br.readLine();
+    	if(erantzun.equalsIgnoreCase("B")) girarenHiriakSartu();
     }
 
+    /**
+     * 
+     * @throws SQLException
+     * @throws IOException
+     * @throws NumberFormatException
+     */
     private void girarenHiriakSartu() throws SQLException, IOException, NumberFormatException{
     	//TODO igual habria q poner a que gira pertenece cada ciudad como si fuese identitate ahula?
     	Statement st =konexioa.createStatement();
@@ -229,12 +269,47 @@ public class DB {
     	}
     }
 
-    private void taldeKaleratu(){
-
+    /**
+     * Talde baten kodea sartuta, talde hori datu basetik aterako da. Dependentzia guztiak "ON DELETE CASCADE" jarrita daudenez, hauek ere ezabatuko dira.
+     * @throws IOException
+     * @throws SQLException
+     */
+    private void taldeKaleratu() throws IOException,SQLException{
+    	System.out.println("Sartu kaleratu nahi duzun taldearen kodea: ");
+    	String taldeIzen = br.readLine();
+    	PreparedStatement ps = konexioa.prepareStatement("DELETE FROM TALDE WHERE Kodea = ?");
+    	ps.setString(1, taldeIzen);
+    	ps.executeUpdate();
     }
 
-    private void hiriakKendu(){
-
+    /**
+     * Erabiltzaileari datu basetik girako bateko zenbait hiri ezabatzeko aukera emango zaio.
+     * @throws IOException
+     * @throws SQLException
+     */
+    private void hiriakKendu() throws IOException,SQLException{
+    	String erantzuna;
+    	do {
+    		System.out.println("Sartu taldearen identifikazio kodea: ");
+    		String taldeKode = br.readLine();
+    		System.out.println("Sartu " + taldeKode + " taldearen giraren hasiera-data: ");
+    		String hasData = br.readLine();
+        	System.out.println("Sartu kendu nahi duzun hiriaren izena: ");
+        	String hiriIzen = br.readLine();
+        	System.out.println("Sartu kendu nahi duzun hiriaren herrialdea: ");
+        	String hiriHerrialde = br.readLine();
+        	PreparedStatement ps = konexioa.prepareStatement("DELETE FROM Hirian_Jo WHERE HiriIzena = ? AND "
+        																			+ "Herrialdea = ? AND "
+        																			+ "HasData = ? AND "
+        																			+ "TaldeK = ?");
+        	ps.setString(1,hiriIzen);
+        	ps.setString(2, hiriHerrialde);
+        	ps.setString(3, hasData);
+        	ps.setString(4, taldeKode);
+        	ps.executeUpdate();
+        	System.out.println("Hiri gehiago ezabatu nahi dituzu? (B/E)");
+        	erantzuna = br.readLine();
+    	}while(erantzuna.equalsIgnoreCase("E"));
     }
 
     private void taldearenGirak(){
@@ -411,4 +486,3 @@ public class DB {
 
     }
 }
-
