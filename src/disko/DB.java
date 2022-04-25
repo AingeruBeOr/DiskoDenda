@@ -197,8 +197,33 @@ public class DB {
 		}while(jarraitu);
     }
 
-    private void diskoBerriaSartu(){
-
+    private void diskoBerriaSartu() throws IOException, SQLException{
+    	System.out.println("Sartu disko izen bat: ");
+    	String izen = br.readLine();
+    	System.out.println("Sartu disko kode bat: ");
+    	int kode = Integer.parseInt(br.readLine());
+    	System.out.println("Sartu disko prezio bat: ");
+    	float prezio = Float.parseFloat(br.readLine());
+    	System.out.println("Sartu talde baten kode bat: ");
+    	int talKode = Integer.parseInt(br.readLine());
+    	PreparedStatement ps = konexioa.prepareStatement("INSERT INTO DISKO VALUES(?, ?, ?, 0)");
+    	ps.setString(1, izen);
+    	ps.setInt(2, kode);
+    	ps.setFloat(3, prezio);
+    	ps.setInt(4, talKode);
+    	ps.executeUpdate();
+    	String erantzun;
+    	int kont = 0;
+    	do{
+    		kont = kont + 1; 
+    		System.out.println("Sartu abesti izen bat: ");
+    		String izena = br.readLine();
+    		PreparedStatement psa = konexioa.prepareStatement("INSERT INTO DISKO VALUES(?, " + kont + ", " + kode + ")");
+    		psa.setString(1, izena);
+    		psa.executeUpdate();
+    		System.out.println("Sartu berri duzun disko horretan abesti berriak sartu nahi dituzu? (B/E)");
+    		erantzun = br.readLine();
+    	} while(erantzun.equalsIgnoreCase("B"));
     }
 
     /**
@@ -371,7 +396,7 @@ public class DB {
     }
 
     private void taldearenGirak(){
-
+    	
     }
 
     /**
@@ -483,11 +508,11 @@ public class DB {
     }
 
     private void diskoIrabaziak(){
-
+    	
     }
 
     private void diskoAbestiakOrdenatu(){
-
+    	
     }
 
     private void giraHiriakOrdenatuta()throws SQLException, IOException{	
@@ -543,6 +568,6 @@ public class DB {
     }
 
     private void milaBainoGehiago(){
-
+    	
     }
 }
