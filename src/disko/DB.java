@@ -169,10 +169,10 @@ public class DB {
     	String izena= br.readLine();
 		System.out.println("Sartu taldearen kodea: ");
 		int kode=Integer.parseInt(br.readLine());
-		System.out.println("Sartu produktorearen kodea:");
-		int pKode=Integer.parseInt(br.readLine());
 		System.out.println("Sartu taldearen deskribapena: ");
     	String desk= br.readLine();
+		System.out.println("Sartu produktorearen kodea:");
+		int pKode=Integer.parseInt(br.readLine());
 		PreparedStatement ps = konexioa.prepareStatement("INSERT INTO TALDE VALUES(?, ?, ?, ?)");
     	ps.setString(1,izena);
     	ps.setInt(2,kode);
