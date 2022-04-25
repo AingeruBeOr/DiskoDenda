@@ -35,7 +35,7 @@ public class DB {
 
     private void menuErakutsi() throws NumberFormatException, IOException, SQLException{
         int aukera = -1;
-        while(aukera!=0){
+        while(aukera!=20){
             System.out.println("  __  __ ______ _   _ _    _         \r\n"
             		+ " |  \\/  |  ____| \\ | | |  | |  /\\    \r\n"
             		+ " | \\  / | |__  |  \\| | |  | | /  \\   \r\n"
