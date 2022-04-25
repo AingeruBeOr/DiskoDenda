@@ -174,8 +174,8 @@ public class DB {
 		System.out.println("Sartu produktorearen kodea:");
 		int pKode=Integer.parseInt(br.readLine());
 		PreparedStatement ps = konexioa.prepareStatement("INSERT INTO TALDE VALUES(?, ?, ?, ?)");
-    	ps.setString(1,izena);
-    	ps.setInt(2,kode);
+		ps.setInt(1,kode);
+		ps.setString(2,izena);
     	ps.setString(3, desk);
     	ps.setInt(4, pKode);
     	ps.executeUpdate();
