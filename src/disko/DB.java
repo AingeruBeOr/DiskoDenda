@@ -397,7 +397,6 @@ public class DB {
 		String hizki, hasData="";
 		Float prezioa;
 		int taldeK=0;
-		int errore=0;
 		int saiakera=0;
 		PreparedStatement ps, ps2=konexioa.prepareStatement("");
 		
@@ -424,7 +423,6 @@ public class DB {
 	    	    	ps.setString(3,herrialde);
 	    	    	ps.setFloat(4, prezioa);
 	    	    	ps.executeUpdate();
-	    	    	errore++;
 	    	    	
 	    	    	//Hiria eta gira konektatzeko:
 	    	    	ps2.setString(1,herrialde);
