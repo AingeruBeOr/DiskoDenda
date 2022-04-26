@@ -318,8 +318,6 @@ public class DB {
     }
     
     private void sortuBerriDenGirarenLekuakSartu(String hData, int tKode) throws SQLException, IOException, NumberFormatException{
-    	boolean jarraitu=true;
-    	boolean lekuGehiago=true;
 		String herrialde="";
 		String hiriIzen="";
 		String hizki, lekua="";
@@ -393,8 +391,6 @@ public class DB {
      * @throws NumberFormatException
      */
     private void girarenHiriakSartu() throws SQLException, IOException, NumberFormatException{
-    	boolean jarraitu=true;
-    	boolean lekuGehiago=true;
 		String herrialde="";
 		String hiriIzen="";
 		String lekua="";
