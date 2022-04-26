@@ -200,6 +200,7 @@ public class DB {
     private void diskoBerriaSartu() throws IOException, SQLException{
     	System.out.println("Sartu disko izen bat: ");
     	String izen = br.readLine();
+    	
     	System.out.println("Sartu disko kode bat: ");
     	int kode = Integer.parseInt(br.readLine());
     	System.out.println("Sartu disko prezio bat: ");
