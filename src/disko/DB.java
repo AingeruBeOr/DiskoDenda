@@ -4,7 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.*;
-
+//PRUEBA ALAIA
 public class DB {
     private BufferedReader br;
     private Connection konexioa;
