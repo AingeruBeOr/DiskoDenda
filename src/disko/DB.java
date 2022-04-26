@@ -95,7 +95,7 @@ public class DB {
     }
 
     private void aukeraIrakurri(int aukera) throws IOException,SQLException{
-    	if(aukera==0 && !pasahitzaZuzenaDa()) aukera=100;
+    	if((aukera==5 && aukera==9 && aukera==10 && aukera==11 && aukera==12 && aukera==13 && aukera==16 && aukera==17) || !pasahitzaZuzenaDa()) aukera=100;
         switch (aukera){
         	case 0:
         		produktoreBerriaSartu();
@@ -149,7 +149,7 @@ public class DB {
                 diskoAbestiakOrdenatu();
                 break;
             case 17:
-                giraHiriakOrdenatuta();
+                giraLekuakOrdenatuta();
                 break;
             case 18:
             	lekuBatekoIrabaziak();
@@ -260,7 +260,7 @@ public class DB {
     	float prezio = Float.parseFloat(br.readLine());
     	System.out.println("Sartu talde baten kode bat: ");
     	int talKode = Integer.parseInt(br.readLine());
-    	PreparedStatement ps = konexioa.prepareStatement("INSERT INTO DISKO VALUES(?, ?, ?, 0)");
+    	PreparedStatement ps = konexioa.prepareStatement("INSERT INTO DISKO VALUES(?, ?, 0, ?)");
     	ps.setString(1, izen);
     	ps.setInt(2, kode);
     	ps.setFloat(3, prezio);
@@ -755,7 +755,7 @@ public class DB {
     	
     }
 
-    private void giraHiriakOrdenatuta()throws SQLException, IOException{	
+    private void giraLekuakOrdenatuta()throws SQLException, IOException{	
     	int saiakera=0;
 	    do{
 	    	try{
