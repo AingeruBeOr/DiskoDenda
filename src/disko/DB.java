@@ -234,10 +234,9 @@ public class DB {
 			    	ps.setInt(2,partKode);
 			    	ps.setInt(3, kode);
 			    	ps.executeUpdate();
-					System.out.println("Gelditzeko sakatu 'G', bestela beste tekla sakatu.");
+					System.out.println("Partaide gehiagorik sartu nahi duzu? (B/E)");
 					hizki=br.readLine();
-					if(hizki.equalsIgnoreCase("G")) {jarraitu=false;}
-				}while(jarraitu);
+				}while(hizki.equalsIgnoreCase("B"));
 				saiakera=3;
 			}catch(NumberFormatException e) {
 				System.out.println("Zenbakia ez den zeozer sartu duzu, saiatu berriro: ");  		
@@ -354,9 +353,9 @@ public class DB {
 	    	    	ps2.setInt(5, tKode);
 	    	    	ps2.executeUpdate();
 	    	    	//Hirian lekuak gehitzeko:
-	    	    	System.out.println("Leku gehiago EZ sartzeko sakatu 'G', bestela beste tekla sakatu.");
+	    	    	System.out.println("Leku gehiagorik sartu nahi duzu? (B/E)");
 	    			hizki=br.readLine();
-	    		}while(!hizki.equalsIgnoreCase("G"));
+	    		}while(hizki.equalsIgnoreCase("B"));
 	    		saiakera=3;
 	    		
 		    }catch(NumberFormatException e) {
@@ -373,9 +372,9 @@ public class DB {
 	    	    	ps2.setString(4, hData);
 	    	    	ps2.setInt(5, tKode);
 	    	    	ps2.executeUpdate();
-	    	    	System.out.println("Leku gehiago EZ sartzeko sakatu 'G', bestela beste tekla sakatu.");
+	    	    	System.out.println("Leku gehiagorik sartu nahi duzu? (B/E)");
 	    			hizki=br.readLine();
-	    			if(!hizki.equalsIgnoreCase("G")) sortuBerriDenGirarenLekuakSartu(hData, tKode);
+	    			if(hizki.equalsIgnoreCase("B")) sortuBerriDenGirarenLekuakSartu(hData, tKode);
 	    			else saiakera=3;
 				}
 			}
@@ -432,9 +431,9 @@ public class DB {
 	    	    	ps2.setInt(5, taldeK);
 	    	    	ps2.executeUpdate();
 	    	    	//Hirian lekuak gehitzeko:
-	    	    	System.out.println("Leku gehiago EZ sartzeko sakatu 'G', bestela beste tekla sakatu.");
+	    	    	System.out.println("Leku gehiagorik sartu nahi duzu? (B/E)");
 	    			hizki=br.readLine();
-	    		}while(!hizki.equalsIgnoreCase("G"));
+	    		}while(hizki.equalsIgnoreCase("B"));
 	    		saiakera=3;
 	    		
 		    }catch(NumberFormatException e) {
@@ -447,9 +446,9 @@ public class DB {
     	    	ps2.setString(4, hasData);
     	    	ps2.setInt(5, taldeK);
     	    	ps2.executeUpdate();
-    	    	System.out.println("Leku gehiago EZ sartzeko sakatu 'G', bestela beste tekla sakatu.");
+    	    	System.out.println("Leku gehiagorik sartu nahi duzu? (B/E)");
     			hizki=br.readLine();
-    			if(!hizki.equalsIgnoreCase("G")) sortuBerriDenGirarenLekuakSartu(hasData, taldeK);
+    			if(hizki.equalsIgnoreCase("B")) sortuBerriDenGirarenLekuakSartu(hasData, taldeK);
     			else saiakera=3;
 			}
 			saiakera++;
@@ -565,9 +564,9 @@ public class DB {
 	            	ps.setInt(4, taldeKode);
 	            	ps.setString(5, lekua);
 	            	ps.executeUpdate();
-	            	System.out.println("Hiri gehiago ezabatu nahi dituzu? (B/E)");
+	            	System.out.println("Leku gehiago ezabatu nahi dituzu? (B/E)");
 	            	erantzuna = br.readLine();
-	        	}while(erantzuna.equalsIgnoreCase("E"));
+	        	}while(erantzuna.equalsIgnoreCase("B"));
 	    		saiakera=3;
 		    }catch(NumberFormatException e) {
 				System.out.println("Zenbakia ez den zeozer sartu duzu, saiatu berriro: ");  		
