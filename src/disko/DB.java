@@ -220,10 +220,8 @@ public class DB {
 		    	ps.setInt(4, pKode);
 		    	ps.executeUpdate();
 				//Partaideak sartzeko:
-				boolean jarraitu=true;
-				String pIzen;
+				String pIzen, hizki;
 				int partKode;
-				String hizki;
 				do {
 					System.out.println("Sartu partaidearen izena: ");
 			    	pIzen= br.readLine();
