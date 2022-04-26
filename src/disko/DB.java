@@ -4,11 +4,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.*;
-//PRUEBA ALAIA
+//
 public class DB {
     private BufferedReader br;
     private Connection konexioa;
-
+    
     public static void main(String[] args) throws NumberFormatException, IOException, SQLException {
         DB db = new DB();
         db.menuErakutsi();
@@ -487,6 +487,7 @@ public class DB {
      * @throws IOException
      * @throws SQLException
      */
+    
     private void giraIrabaziak() throws IOException,SQLException{
         System.out.println("Sartu talde baten izena: ");
         String taldeIzen = br.readLine();
@@ -571,3 +572,4 @@ public class DB {
     	
     }
 }
+
