@@ -453,8 +453,14 @@ public class DB {
 		}while(saiakera<3);
     }
 
-    private void sarrerakEguneratu(){
-
+    private void sarrerakEguneratu(int kop, String hiria, String izena) throws SQLException, IOException{
+    	PreparedStatement ps = konexioa.prepareStatement("UPDATE Lekuan_Jo SET SaldutakoSarrerak = (SaldutakoSarrerak + ?) WHERE Hiria = ? AND izena = ?");
+    	ps.setInt(1,kop);
+    	ps.setString(2,hiria);
+    	ps.setString(3,izena);
+    	ps.executeUpdate();
+    	
+    	System.out.println("Datu basea egoki eguneratu da");
     }
     
     /**
@@ -577,8 +583,18 @@ public class DB {
 		}while(saiakera<3);
     }
 
-    private void taldearenGirak(){
-    	
+    private void taldearenGirak() throws SQLException, IOException{
+	    		System.out.println("Sartu taldearen izena:");
+	            String taldeIzen = br.readLine();
+	            PreparedStatement ps = konexioa.prepareStatement(
+	            		"SELECT GIRA.hasData\n" + 
+	            		"FROM GIRA, TALDE\n" + 
+	            		"WHERE TALDE.izena = ? and TALDE.kode = GIRA.kode\n");
+	            ps.setString(1,taldeIzen);
+	            ResultSet rs = ps.executeQuery();
+	            while(rs.next()){
+	                System.out.println(rs.getString(1) + " " + rs.getString(2) + " " + rs.getString(3));
+	            }
     }
 
     /**
@@ -662,8 +678,21 @@ public class DB {
 		}while(saiakera<3);
     }
 
-    private void diskoenPrezioa(){
-
+    private void diskoenPrezioa() throws IOException, SQLException{
+    	System.out.println("Sartu talde baten izena: ");
+        String taldeIzen = br.readLine();
+        System.out.println("Sartu disko baten izena: ");
+        String diskoIzen = br.readLine();
+        PreparedStatement ps = konexioa.prepareStatement(
+        		"SELECT DISKO.izena, DISKO.prezioa\n" + 
+        		"FROM TALDE, DISKO\n" + 
+        		"WHERE TALDE.izena = ? and DISKO.izena= ? and TALDE.kodea = DISKO.TaldeK\n");
+        ps.setString(1, taldeIzen);
+        ps.setString(2, diskoIzen);
+        ResultSet rs = ps.executeQuery();
+        while(rs.next()){
+            System.out.println(rs.getString(1) + " " + rs.getFloat(2));
+        }
     }
     /**
      * Talde baten produktore bera erabiltzen duten taldeak.
@@ -671,7 +700,7 @@ public class DB {
      * @throws IOException
      * @throws SQLException
      */
-    private void taldeProduktoreBera()throws IOException,SQLException{
+    private void taldeProduktoreBera() throws IOException,SQLException{
     	int saiakera=0;
 	    do{
 	    	try{
@@ -744,12 +773,36 @@ public class DB {
 		}while(saiakera<3);
     }
 
-    private void diskoIrabaziak(){
-    	
+    private void diskoIrabaziak() throws IOException,SQLException{
+    	System.out.println("Sartu disko baten izena: ");
+        String diskoIzen = br.readLine();
+        PreparedStatement ps = konexioa.prepareStatement(
+        		"SELECT SUM(prezioa * saldutakoKopiak) \n" + 
+        		"FROM DISKO\n" + 
+        		"WHERE DISKO.Izena = ? \n");
+        ps.setString(1,diskoIzen);
+        ResultSet rs = ps.executeQuery();
+        rs.next();
+        System.out.println(rs.getFloat(2));
     }
 
-    private void diskoAbestiakOrdenatu(){
-    	
+    private void diskoAbestiakOrdenatu() throws IOException,SQLException{
+    	System.out.println("Sartu disko baten izena: ");
+    	String diskoIzena = br.readLine();
+    	System.out.println("Sartu disko baten kodea: ");
+    	String taldeIzena = br.readLine();
+    	PreparedStatement ps = konexioa.prepareStatement(
+    			"SELECT  DISKO.Kodea, DISKO.Izena, ABESTIA.*\n" + 
+    			"FROM TALDE, DISKO, ABESTIA\n" + 
+    			"WHERE TALDE.kodea = DISKO.TaldeK AND\n" + 
+    			"DISKO.Kodea=ABESTIA.DiskoK AND DISKO.Izena = ? AND TALDE.Izena= ? \n" + 
+    			"ORDER BY ABESTIA.Zenbakia\n");
+    	ps.setString(1,diskoIzena);
+        ps.setString(2,taldeIzena);
+        ResultSet rs = ps.executeQuery();
+        while(rs.next()){
+            System.out.println(rs.getInt(1) + " " + rs.getString(2) + " " + rs.getString(3) + " " + rs.getInt(4) + " " + rs.getInt(5));
+        }
     }
 
     private void giraLekuakOrdenatuta()throws SQLException, IOException{	
@@ -829,8 +882,27 @@ public class DB {
 		}while(saiakera<3);
 	}
 
-    private void milaBainoGehiago(){
-    	
+    private void milaBainoGehiago() throws IOException, SQLException{
+    	System.out.println("Sartu talde baten izena: ");
+        String taldeIzen = br.readLine();
+        System.out.println("Sartu leku baten izena: ");
+        String leku = br.readLine();
+        PreparedStatement ps = konexioa.prepareStatement(
+                "SELECT LEKUA.Izena, COUNT(*), SUM(Prezioa*SaldutakoSarrerak) " +
+                "FROM LEKUA, TALDE, GIRA, LEKUAN_JO " +
+                "WHERE TALDE.Izena=? AND " +
+                    "TALDE.Kodea=GIRA.TaldeK AND " +
+                    "GIRA.TaldeK=LEKUAN_JO.TaldeK AND GIRA.hasData=LEKUAN_JO.hasData AND"+
+            		"LEKUA.Herrialdea=LEKUAN_JO.Herrialdea AND LEKUA.Izena=LEKUAN_JO.Izena AND"+
+            		"LEKUA.Hiria=LEKUAN_JO.Hiria AND"+
+                    "LEKUA.Izena=?" +
+            		"HAVING SUM(Prezioa*SaldutakoSarrerak)>1000");
+        ps.setString(1,taldeIzen);
+        ps.setString(2, leku);
+        ResultSet rs = ps.executeQuery();
+        while(rs.next()){
+            System.out.println(rs.getString(1) + rs.getInt(2) + rs.getInt(3));
+        }
     }
 }
 
