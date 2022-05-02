@@ -971,6 +971,7 @@ public class DB {
     	do {
     		try {
     			System.out.println("Sartu talde baten izena: ");
+    			
     	        String taldeIzen = br.readLine();
     	        System.out.println("Sartu leku baten izena: ");
     	        String leku = br.readLine();
