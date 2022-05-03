@@ -24,7 +24,7 @@ public class DB {
         br = new BufferedReader(new InputStreamReader(System.in));
         konektatu();
     }
-    
+    	
     private void konektatu(){
         try{
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -211,22 +211,10 @@ public class DB {
             	ps.setInt(3, telf);
             	ps.executeUpdate();
             	saiakera=3;
-            
         	}
-    		catch(StringLuzeegiaException e) {
-            	e.mezuaInprimatu();
-            }
-    		catch(NumberFormatException e) {
-        		System.out.println(e.getMessage());
-        		System.out.println(e.getLocalizedMessage());
-        		System.out.println("Zenbakia ez den zeozer sartu duzu edo zenbakia handiegia da.");   		
-        	}
-    		catch(SQLException e) {
-        		System.out.println("ERRORE BAT SUERTATU DA DATU BASEAREKIN");
-        		System.out.println(e.getMessage());
-        		System.out.println(e.getErrorCode());
-        		if (e.getErrorCode()==1062) System.out.println("Kode hori duen produktorea existitzen da.");
-        	}
+    		catch(Exception e) {
+    			salbuespenaTratatu(e);
+    		}
     		saiakera++;
     	}while(saiakera<3);
     }
@@ -1171,8 +1159,28 @@ public class DB {
      * @throws StringLuzeegiaException
      */
     private String stringEgokiaDa(String pKonprobatzekoString, int luzera) throws StringLuzeegiaException{
-    	if(pKonprobatzekoString.length() <= luzera) throw new StringLuzeegiaException();
+    	if(pKonprobatzekoString.length() > luzera) throw new StringLuzeegiaException();
     	return pKonprobatzekoString;
+    }
+    
+    private void salbuespenaTratatu(Exception e) {
+    	if(e instanceof StringLuzeegiaException) {
+    		StringLuzeegiaException eaux = (StringLuzeegiaException) e;
+    		eaux.mezuaInprimatu();
+    	}
+    	else if(e instanceof NumberFormatException) {
+    		NumberFormatException eaux = (NumberFormatException) e;
+    		System.out.println(eaux.getMessage());
+    		System.out.println(eaux.getLocalizedMessage());
+    		System.out.println("Zenbakia ez den zeozer sartu duzu edooooooo zenbakia handiegia da."); 
+    	}
+    	else if(e instanceof SQLException) {
+    		SQLException eaux = (SQLException) e; 
+    		System.out.println("ERRORE BAT SUERTATU DA DATU BASEAREKIN");
+    		System.out.println(eaux.getMessage());
+    		System.out.println(eaux.getErrorCode());
+    		if (eaux.getErrorCode()==1062) System.out.println("Kode hori duen produktorea existitzen da.");
+    	}
     }
 }
 
