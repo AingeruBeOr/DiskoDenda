@@ -119,7 +119,7 @@ public class DB {
                 giraBerriakSartu();
                 break;
             case 4:
-                girarenHiriakSartu();
+                girarenLekuakSartu();
                 break;
             case 5:
                 girarenBukHasDatakAldatu();
@@ -158,10 +158,10 @@ public class DB {
                 giraLekuezOrdenatutaErakutsi();
                 break;
             case 17:
-            	lekuBatekoIrabaziak();
+            	lekuBakoitzekoBatezbestekoIrabaziak();
                 break;
             case 18:
-                milaBainoGehiago();
+                euro1000BainoGehiago2022Lekuak();
                 break;
             case 19:
             	sarreraErosketaEgin();
@@ -417,7 +417,7 @@ public class DB {
      * @throws IOException
      * @throws NumberFormatException
      */
-    private void girarenHiriakSartu() throws IOException{
+    private void girarenLekuakSartu() {
 		String herrialde="";
 		String hiriIzen="";
 		String lekua="";
@@ -425,14 +425,14 @@ public class DB {
 		Float prezioa=(float)0;
 		int taldeK=0;
 		int saiakera=0;
-		PreparedStatement ps, ps2=konexioa.prepareStatement("INSERT INTO LEKUA VALUES(?, ?, ?)");
+		PreparedStatement ps2=konexioa.prepareStatement("INSERT INTO LEKUA VALUES(?, ?, ?)");
 		
 	    do{
 	    	try{
 	    		System.out.println("Sartu jotzen duen taldearen kodea: ");
-	        	taldeK= Integer.parseInt(br.readLine());
+	        	taldeK = Integer.parseInt(br.readLine());
 	        	System.out.println("Sartu gira berriaren hasiera data (UUUU-HH-EE formatuan): ");
-	        	hasData = br.readLine();
+	        	hasData = konprobatuDataFormatua(br.readLine());
 	        	do {
 	    			System.out.println("Sartu herrialdearen izena: ");
 	    		    herrialde= br.readLine();
@@ -443,12 +443,12 @@ public class DB {
     	    		System.out.println("Sartu sarreren prezioa: ");
     	        	prezioa= Float.valueOf(br.readLine());
     	        	ps2 = konexioa.prepareStatement("INSERT INTO LEKUAN_JO VALUES(?, ?, ?, ?, ?, ?, 0)");
- 	    			ps = konexioa.prepareStatement("INSERT INTO LEKUA VALUES(?, ?, ?)");
+ 	    			PreparedStatement ps = konexioa.prepareStatement("INSERT INTO LEKUA VALUES(?, ?, ?)");
 	    			//Hiria sortzeko:
 	    			ps.setString(1,lekua);
 	    			ps.setString(2,hiriIzen);
 	    	    	ps.setString(3,herrialde);
-	    	    	ps.setFloat(4, prezioa);
+	    	    	//ps.setFloat(4, prezioa);
 	    	    	ps.executeUpdate();
 	    	    	
 	    	    	//Hiria eta gira konektatzeko:
@@ -491,7 +491,7 @@ public class DB {
      * @throws SQLException
      * @throws NumberFormatException
      */
-    private void girarenBukHasDatakAldatu()throws IOException{
+    private void girarenBukHasDatakAldatu(){
     	int saiakera=0;
 	    do{
 	    	try{
@@ -534,7 +534,7 @@ public class DB {
      * @throws IOException
      * @throws SQLException
      */
-    private void taldeaKaleratu() throws IOException{
+    private void taldeaKaleratu(){
     	int saiakera=0;
 	    do{
 	    	try{
@@ -557,7 +557,7 @@ public class DB {
      * @throws IOException
      * @throws SQLException
      */
-    private void lekuakGiratikKendu() throws IOException{
+    private void lekuakGiratikKendu() {
     	int saiakera=0;
     	String erantzuna;
 	    do{
@@ -573,11 +573,10 @@ public class DB {
 	            	String hiriHerrialde = br.readLine();
 	            	System.out.println("Sartu kendu nahi duzun lekuaren izena: ");
 	            	String lekua=br.readLine();
-	            	PreparedStatement ps = konexioa.prepareStatement("DELETE FROM Lekuan_Jo WHERE Hiria = ? AND "
-	            																			+ "Herrialdea = ? AND "
-	            																			+ "HasData = ? AND "
-	            																			+ "TaldeK = ? AND "
-	            																			+ "Izena = ?");
+	            	PreparedStatement ps = konexioa.prepareStatement(
+	            			"DELETE FROM Lekuan_Jo " +
+	            			"WHERE Hiria = ? AND  Herrialdea = ? AND HasData = ? AND TaldeK = ? AND Izena = ?"
+	            	);
 	            	ps.setString(1,hiriIzen);
 	            	ps.setString(2, hiriHerrialde);
 	            	ps.setString(3, hasData);
@@ -596,7 +595,7 @@ public class DB {
 		}while(saiakera<3);
     }
 
-    private void taldearenGirakErakutsi() throws SQLException{
+    private void taldearenGirakErakutsi(){
     	int saiakera=0;
     	do {
     		try {
@@ -626,7 +625,7 @@ public class DB {
      * @throws IOException
      * @throws SQLException
      */
-    private void girarenLekuakErakutsi() throws IOException{		
+    private void girarenLekuakErakutsi(){		
     	int saiakera=0;
 	    do{
 	    	try{
@@ -663,7 +662,7 @@ public class DB {
      * @throws IOException
      * @throws SQLException
      */
-    private void diskoarenAbestiakErakutsi() throws IOException{
+    private void diskoarenAbestiakErakutsi(){
     	int saiakera=0;
 	    do{
 	    	try{
@@ -693,7 +692,7 @@ public class DB {
 		}while(saiakera<3);
     }
 
-    private void diskoenPrezioakErakutsi() throws IOException{
+    private void diskoenPrezioakErakutsi() {
     	int saiakera=0;
     	do {
     		try {
@@ -722,7 +721,7 @@ public class DB {
      * @throws IOException
      * @throws SQLException
      */
-    private void taldeProduktoreBera() throws IOException{
+    private void taldeProduktoreBera() {
     	int saiakera=0;
 	    do{
 	    	try{
@@ -756,7 +755,7 @@ public class DB {
      * @throws SQLException
      */
     
-    private void giraIrabaziak() throws IOException{
+    private void giraIrabaziak() {
     	int saiakera=0;
 	    do{
 	    	try{
@@ -786,7 +785,7 @@ public class DB {
 		}while(saiakera<3);
     }
 
-    private void diskoIrabaziak() throws IOException{
+    private void diskoIrabaziak() {
     	int saiakera=0;
     	do {
     		try {
@@ -809,7 +808,7 @@ public class DB {
     	}while(saiakera<3);
     }
 
-    private void diskoaAbestiazOrdenatuaErakutsi() throws IOException{
+    private void diskoaAbestiazOrdenatuaErakutsi() {
     	int saiakera=0;
     	do {
     		try {
@@ -839,7 +838,7 @@ public class DB {
     	
     }
 
-    private void giraLekuezOrdenatutaErakutsi()throws IOException{	
+    private void giraLekuezOrdenatutaErakutsi() {	
     	int saiakera=0;
 	    do{
 	    	try{
@@ -873,77 +872,47 @@ public class DB {
     }
 
     /**
-     * Talde batek hiri baten iriabazitako dirua adierziko da.
-     * Horretarako, taldearen izena eta hiriaren izena eskatuko dira.
+     * Leku bakoitzeko lortzen diren batezbesteko irabaziak lortzeko erabiltzen da
      * @throws IOException
      * @throws SQLException
      */
-    private void lekuBatekoIrabaziak() throws IOException{
-    	int saiakera=0;
-	    do{
-	    	try{
-	    		System.out.println("Sartu talde baten izena: ");
-	            String taldeIzen = br.readLine();
-	            System.out.println("Sartu leku baten izena: ");
-	            String leku = br.readLine();
-	            PreparedStatement ps = konexioa.prepareStatement(
-	                    "SELECT LEKUA.Izena, COUNT(*), SUM(Prezioa*SaldutakoSarrerak) " +
-	                    "FROM LEKUA, TALDE, GIRA, LEKUAN_JO " +
-	                    "WHERE TALDE.Izena=? AND " +
-	                        "TALDE.Kodea=GIRA.TaldeK AND " +
-	                        "GIRA.TaldeK=LEKUAN_JO.TaldeK AND GIRA.hasData=LEKUAN_JO.hasData AND "+
-                    		"LEKUA.Herrialdea=LEKUAN_JO.Herrialdea AND LEKUA.Izena=LEKUAN_JO.Izena AND "+
-                    		"LEKUA.Hiria=LEKUAN_JO.Hiria AND "+
-	                        "LEKUA.Izena=?");
-	            ps.setString(1,taldeIzen);
-	            ps.setString(2, leku);
-	            ResultSet rs = ps.executeQuery();
-	            while(rs.next()){
-	                System.out.println(rs.getString(1) +" "+ rs.getString(2) +" "+ rs.getString(3)+"€");
-	            }
-	            saiakera=3;
-		    }
-	    	catch(Exception e) {
-    			salbuespenaTratatu(e);
+    private void lekuBakoitzekoBatezbestekoIrabaziak() {
+    	try{
+    		PreparedStatement ps = konexioa.prepareStatement(
+    				"SELECT Herrialdea, Hiria, Izena, AVG(Prezioa * SaldutakoSarrerak)" + 
+    				"FROM LEKUAN_JO " + 
+    				"GROUP BY Herrialdea, Hiria, Izena " +
+    				"ORDER BY AVG(Prezioa * SaldutakoSarrerak)"
+    		);
+    		ResultSet rs = ps.executeQuery();
+    		while(rs.next()) {
+    			System.out.println(rs.getString(1) + rs.getString(2) + rs.getString(3) + rs.getFloat(4)); 
     		}
-			saiakera++;
-		}while(saiakera<3);
+	    }
+    	catch(Exception e) {
+			salbuespenaTratatu(e);
+		}
 	}
 
-    private void milaBainoGehiago() throws IOException{
-    	int saiakera=0;
-    	do {
-    		try {
-    			System.out.println("Sartu talde baten izena: ");
-    			
-    	        String taldeIzen = br.readLine();
-    	        System.out.println("Sartu leku baten izena: ");
-    	        String leku = br.readLine();
-    	        PreparedStatement ps = konexioa.prepareStatement(
-    	                "SELECT LEKUA.Izena, COUNT(*), SUM(Prezioa*SaldutakoSarrerak) " +
-    	                "FROM LEKUA, TALDE, GIRA, LEKUAN_JO " +
-    	                "WHERE TALDE.Izena=? AND " +
-    	                    "TALDE.Kodea=GIRA.TaldeK AND " +
-    	                    "GIRA.TaldeK=LEKUAN_JO.TaldeK AND GIRA.hasData=LEKUAN_JO.hasData AND "+
-    	            		"LEKUA.Herrialdea=LEKUAN_JO.Herrialdea AND LEKUA.Izena=LEKUAN_JO.Izena AND "+
-    	            		"LEKUA.Hiria=LEKUAN_JO.Hiria AND "+
-    	                    "LEKUA.Izena=? " +
-    	            		"HAVING SUM(Prezioa*SaldutakoSarrerak)>1000");
-    	        ps.setString(1,taldeIzen);
-    	        ps.setString(2, leku);
-    	        ResultSet rs = ps.executeQuery();
-    	        while(rs.next()){
-    	            System.out.println(rs.getString(1) +" "+ rs.getInt(2) + " "+rs.getInt(3));
-    	        }
-    			saiakera=3;
-    		}
-    		catch(Exception e) {
-    			salbuespenaTratatu(e);
-    		}
-    		saiakera++;
-    	}while(saiakera<3);
+    private void euro1000BainoGehiago2022Lekuak() {
+		try {
+			PreparedStatement ps = konexioa.prepareStatement(
+					"SELECT Herrialdea, Hiria, Izena, AVG(Prezioa * SaldutakoSarrerak)" + 
+					"FROM LEKUAN_JO " +
+					"WHERE HasData like ‘2022%’ " +
+					"GROUP BY Herrialdea, Hiria, Izena " +
+					"HAVING AVG(Prezioa * SaldutakoSarrerak) > 1000"
+			);
+			ResultSet rs = ps.executeQuery();
+			while(rs.next()) {
+				System.out.println(rs.getString(1) + rs.getString(2) + rs.getString(3) + rs.getFloat(4));
+			}
+		}
+		catch(Exception e) {
+			salbuespenaTratatu(e);
+		}
     }
-    private void diskoErosketaEgin() throws IOException {
+    private void diskoErosketaEgin() {
     	int saiakera=0;
     	do {
     		try {
@@ -983,18 +952,19 @@ public class DB {
     	}while(saiakera<3);
     }
     
-    private void sarreraErosketaEgin() throws IOException {
+    private void sarreraErosketaEgin() {
     	int saiakera=0;
     	do {
     		try {
     			System.out.println("Sartu taldearen izena:");
 	            String taldeIzen = br.readLine();
 	            PreparedStatement ps = konexioa.prepareStatement(
-	            		"SELECT GIRA.hasData, LEKUA.Izena, LEKUA.Hiria, LEKUA.Herrialdea, LEKUAN_JO.Prezioa " + 
+	            		"SELECT GIRA.hasData, LEKUA.herrialdea, LEKUA.Hiria, LEKUA.Izena, LEKUAN_JO.Prezioa " + 
 	            		"FROM GIRA, TALDE, LEKUAN_JO, LEKUA " + 
 	            		"WHERE TALDE.izena = ? and TALDE.kodea = GIRA.taldek AND "+
-	            		"GIRA.HasData=LEKUAN_JO.HasData AND LEKUAN_JO.Hiria=LEKUA.Hiria AND LEKUAN_JO.Izena=LEKUA.Izena AND "+
-	            		"LEKUAN_JO.Herrialdea=LEKUA.Herrialdea");
+	            			"GIRA.HasData = LEKUAN_JO.HasData AND LEKUAN_JO.Hiria = LEKUA.Hiria AND LEKUAN_JO.Izena = LEKUA.Izena AND "+
+	            			"LEKUAN_JO.Herrialdea=LEKUA.Herrialdea"
+	            );
 	            ps.setString(1,taldeIzen);
 	            ResultSet rs = ps.executeQuery();
 	            System.out.println("Hauek dira " + taldeIzen + " taldeak egiten dituen girak eta lekuak:");
@@ -1004,19 +974,18 @@ public class DB {
 	                System.out.println(rs.getString(1)+" "+rs.getString(2)+" "+rs.getString(3)+" "+rs.getString(4)+" "+rs.getFloat(5));
 	            }
 	            if(daude) {
-	            	 System.out.println("Aukeratu horietako bat: ");
+	            	System.out.println("Aukeratu horietako bat: ");
 	 	            System.out.println("Sartu hasiera data (UUUU-HH-EE formatuan): ");
-	 	            String hasData=br.readLine();
+	 	            String hasData = konprobatuDataFormatua(br.readLine());
 	 	            System.out.println("Sartu hiriaren izena: ");
-	 	            String hiria=br.readLine();
+	 	            String hiria = br.readLine();
 	 	            System.out.println("Sartu lekuaren izena: ");
-	 	            String lekuIzen=br.readLine();
+	 	            String lekuIzen = br.readLine();
 	 	            System.out.println("Sartu erosi nahi dituzun sarrera kopurua: ");
-	 	            int kop= Integer.parseInt(br.readLine());
+	 	            int kop = Integer.parseInt(br.readLine());
 	 	            sarrerakEguneratu(kop, hasData, hiria, lekuIzen);
 	 	            System.out.println("Erosketa zuzen burtu da.");
-	            }else {System.out.println("Ez daude "+taldeIzen+" taldearen girak eskuragarri, bilatu beste talde batenak.");}
-	           
+	            }else {System.out.println("Ez daude " + taldeIzen + " taldearen girak eskuragarri, bilatu beste talde batenak.");}
     			saiakera=3;
     		}
     		catch(Exception e) {
@@ -1026,12 +995,14 @@ public class DB {
     	}while(saiakera<3);
     }
     
-    private void sarrerakEguneratu(int kop, String hasData, String hiria, String izena) throws IOException{
+    private void sarrerakEguneratu(int kop, String hasData, String hiria, String izena) {
     	int saiakera=0;
     	do {
     		try {
-    			PreparedStatement ps = konexioa.prepareStatement("UPDATE Lekuan_Jo SET SaldutakoSarrerak = (SaldutakoSarrerak + ?) "+ 
-    															" WHERE Hiria = ? AND izena = ? AND hasData= ?");
+    			PreparedStatement ps = konexioa.prepareStatement(
+    					"UPDATE Lekuan_Jo SET SaldutakoSarrerak = (SaldutakoSarrerak + ?) "+ 
+    					"WHERE Hiria = ? AND izena = ? AND hasData= ?"
+    			);
     	    	ps.setInt(1,kop);
     	    	ps.setString(2,hiria);
     	    	ps.setString(3,izena);
@@ -1039,21 +1010,22 @@ public class DB {
     	    	ps.executeUpdate();
     	    	System.out.println("Datu basea egoki eguneratu da");
     			saiakera=3;
-        	}catch(SQLException e) {
-        		System.out.println("ERRORE BAT SUERTATU DA DATU BASEAREKIN");
-        		System.out.println(e.getMessage());
-        		System.out.println(e.getErrorCode());
         	}
+    		catch(Exception e) {
+    			salbuespenaTratatu(e);
+    		}
     		saiakera++;
     	}while(saiakera<3);
     }
     
-    private void diskoakEguneratu(int kop, String diskoIzen, int taldek) throws IOException{
+    private void diskoakEguneratu(int kop, String diskoIzen, int taldek) {
     	int saiakera=0;
     	do {
     		try {
-    			PreparedStatement ps = konexioa.prepareStatement("UPDATE DISKO SET SaldutakoKopiak = (SaldutakoKopiak + ?) "+ 
-    															" WHERE Disko.izena=? AND DISKO.taldek=?");
+    			PreparedStatement ps = konexioa.prepareStatement(
+    					"UPDATE DISKO SET SaldutakoKopiak = (SaldutakoKopiak + ?) "+ 
+    					"WHERE Disko.izena=? AND DISKO.taldek=?"
+    			);
     	    	ps.setInt(1,kop);
     	    	ps.setString(2,diskoIzen);
     	    	ps.setInt(3,taldek);
@@ -1074,7 +1046,7 @@ public class DB {
      * @param pKonprobatzeko
      * @throws DataFormatException
      */
-    private void konprobatuDataFormatua(String pKonprobatzeko) throws DataFormatException{
+    private String konprobatuDataFormatua(String pKonprobatzeko) throws DataFormatException{
     	char karakterea;
     	boolean bukatu = false;
     	int i = 0;
@@ -1085,7 +1057,8 @@ public class DB {
         	}
         	else if(karakterea != '-') bukatu = true;
     	}
-    	if(bukatu) throw new DataFormatException(); 
+    	if(bukatu) throw new DataFormatException();
+    	else return pKonprobatzeko;
     }
     
     /**
@@ -1100,6 +1073,10 @@ public class DB {
     	return pKonprobatzekoString;
     }
     
+    /**
+     * Salbuespen motaren arabera, era batean edo bestean tratatuko da salbuespena.
+     * @param e
+     */
     private void salbuespenaTratatu(Exception e) {
     	if(e instanceof StringLuzeegiaException) {
     		StringLuzeegiaException eaux = (StringLuzeegiaException) e;
@@ -1109,7 +1086,7 @@ public class DB {
     		NumberFormatException eaux = (NumberFormatException) e;
     		System.out.println(eaux.getMessage());
     		System.out.println(eaux.getLocalizedMessage());
-    		System.out.println("Zenbakia ez den zeozer sartu duzu edooooooo zenbakia handiegia da."); 
+    		System.out.println("Zenbakia ez den zeozer sartu duzu edo zenbakia handiegia da."); 
     	}
     	else if(e instanceof SQLException) {
     		SQLException eaux = (SQLException) e; 
