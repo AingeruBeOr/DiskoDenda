@@ -58,7 +58,7 @@ public class DB {
 
     
 
-    private void menuErakutsi() throws NumberFormatException, IOException, SQLException{
+    private void menuErakutsi() throws IOException,SQLException{
     	int aukera = -1;
         try {
         	while(aukera!=20){
@@ -103,7 +103,7 @@ public class DB {
         menuErakutsi();
     }
 
-    private void aukeraIrakurri(int aukera) throws IOException,SQLException{
+    private void aukeraIrakurri(int aukera) throws IOException{
     	//if((aukera==5 && aukera==9 && aukera==10 && aukera==11 && aukera==12 && aukera==13 && aukera==16 && aukera==17) || !pasahitzaZuzenaDa()) aukera=100;
         switch (aukera){
         	case 0:
@@ -195,7 +195,7 @@ public class DB {
      * 
      */
     
-    private void produktoreBerriaSartu() throws SQLException, IOException, NumberFormatException{
+    private void produktoreBerriaSartu() throws IOException{
     	int saiakera=0;
     	do {
     		try {
@@ -225,7 +225,7 @@ public class DB {
      * @throws IOException
      * @throws NumberFormatException
      */
-    private void taldeakSartu() throws SQLException, IOException, NumberFormatException{
+    private void taldeakSartu() throws IOException{
     	int saiakera=0;
     	do{
 			try {
@@ -262,23 +262,14 @@ public class DB {
 				}while(hizki.equalsIgnoreCase("B"));
 				saiakera=3;
 			}
-			catch(StringLuzeegiaException e) {
-				e.mezuaInprimatu();
-			}
-			catch(NumberFormatException e) {
-        		System.out.println("Zenbakia ez den zeozer sartu duzu edo zenbakia handiegia da.");   		
-			}
-			catch(SQLException e) {
-				System.out.println("ERRORE BAT SUERTATU DA DATU BASEAREKIN");
-				System.out.println(e.getMessage());
-        		System.out.println(e.getErrorCode());
-        		if (e.getErrorCode()==1062) System.out.println("Kode edo izen hori duen taldea existitzen da.");
+			catch(Exception e) {
+				salbuespenaTratatu(e);
 			}
 			saiakera++;
 		}while(saiakera<3);
     }
 
-    private void diskoBerriaSartu() throws IOException, SQLException{
+    private void diskoBerriaSartu() throws IOException{
     	int saiakera=0;
     	do {
     		try {
@@ -311,13 +302,10 @@ public class DB {
     	    		erantzun = br.readLine();
     	    	} while(erantzun.equalsIgnoreCase("B"));
     			saiakera=3;
-    		}catch(NumberFormatException e) {
-        		System.out.println("Zenbakia ez den zeozer sartu duzu, saiatu berriro: ");   		
-        	}catch(SQLException e) {
-        		System.out.println("ERRORE BAT SUERTATU DA DATU BASEAREKIN");
-        		System.out.println(e.getMessage());
-        		System.out.println(e.getErrorCode());
-        	}
+    		}
+    		catch(Exception e) {
+    			salbuespenaTratatu(e);
+    		}
     		saiakera++;
     	}while(saiakera<3);
     	
@@ -329,7 +317,7 @@ public class DB {
      * @throws SQLException 
      * @throws IOException
      */
-    private void giraBerriakSartu() throws SQLException, IOException{
+    private void giraBerriakSartu() throws IOException{
     	int saiakera=0;
     	do {
     		try {
@@ -348,19 +336,15 @@ public class DB {
     	    	String erantzun = br.readLine();
     	    	if(erantzun.equalsIgnoreCase("B")) sortuBerriDenGirarenLekuakSartu(hasData, taldeKode);
     	    	saiakera=3;
-    		}catch(NumberFormatException e) {
-				System.out.println("Zenbakia ez den zeozer sartu duzu, saiatu berriro: ");  		
-			}catch(SQLException e) {
-				System.out.println("ERRORE BAT SUERTATU DA DATU BASEAREKIN");
-				System.out.println(e.getMessage());
-        		System.out.println(e.getErrorCode());
-        		if (e.getErrorCode()==1062) System.out.println("Hasiera data hori duen gira badu taldea.");
-			}
+    		}
+    		catch(Exception e) {
+    			salbuespenaTratatu(e);
+    		}
 			saiakera++;
 		}while(saiakera<3);
     }
     
-    private void sortuBerriDenGirarenLekuakSartu(String hData, int tKode) throws SQLException, IOException, NumberFormatException{
+    private void sortuBerriDenGirarenLekuakSartu(String hData, int tKode) throws IOException{
 		String herrialde="";
 		String hiriIzen="";
 		String hizki, lekua="";
@@ -433,7 +417,7 @@ public class DB {
      * @throws IOException
      * @throws NumberFormatException
      */
-    private void girarenHiriakSartu() throws SQLException, IOException, NumberFormatException{
+    private void girarenHiriakSartu() throws IOException{
 		String herrialde="";
 		String hiriIzen="";
 		String lekua="";
@@ -507,7 +491,7 @@ public class DB {
      * @throws SQLException
      * @throws NumberFormatException
      */
-    private void girarenBukHasDatakAldatu()throws SQLException, NumberFormatException, IOException{
+    private void girarenBukHasDatakAldatu()throws IOException{
     	int saiakera=0;
 	    do{
 	    	try{
@@ -537,13 +521,10 @@ public class DB {
 	            	ps.executeUpdate();
 	        	}
 	        	saiakera=3;
-		    }catch(NumberFormatException e) {
-				System.out.println("Zenbakia ez den zeozer sartu duzu, saiatu berriro: ");  		
-			}catch(SQLException e) {
-				System.out.println("ERRORE BAT SUERTATU DA DATU BASEAREKIN");
-				System.out.println(e.getMessage());
-				System.out.println(e.getErrorCode());
-			}
+		    }
+	    	catch(Exception e) {
+    			salbuespenaTratatu(e);
+    		}
 			saiakera++;
 		}while(saiakera<3);
     }
@@ -553,7 +534,7 @@ public class DB {
      * @throws IOException
      * @throws SQLException
      */
-    private void taldeKaleratu() throws IOException,SQLException{
+    private void taldeKaleratu() throws IOException{
     	int saiakera=0;
 	    do{
 	    	try{
@@ -563,13 +544,10 @@ public class DB {
 	        	ps.setString(1, taldeIzen);
 	        	ps.executeUpdate();
 	        	saiakera=3;
-		    }catch(NumberFormatException e) {
-				System.out.println("Zenbakia ez den zeozer sartu duzu, saiatu berriro: ");  		
-			}catch(SQLException e) {
-				System.out.println("ERRORE BAT SUERTATU DA DATU BASEAREKIN");
-				System.out.println(e.getMessage());
-				System.out.println(e.getErrorCode());
-			}
+		    }
+	    	catch(Exception e) {
+    			salbuespenaTratatu(e);
+    		}
 			saiakera++;
 		}while(saiakera<3);
     }
@@ -579,7 +557,7 @@ public class DB {
      * @throws IOException
      * @throws SQLException
      */
-    private void lekuakKenduGiratik() throws IOException,SQLException{
+    private void lekuakKenduGiratik() throws IOException{
     	int saiakera=0;
     	String erantzuna;
 	    do{
@@ -610,18 +588,15 @@ public class DB {
 	            	erantzuna = br.readLine();
 	        	}while(erantzuna.equalsIgnoreCase("B"));
 	    		saiakera=3;
-		    }catch(NumberFormatException e) {
-				System.out.println("Zenbakia ez den zeozer sartu duzu, saiatu berriro: ");  		
-			}catch(SQLException e) {
-				System.out.println("ERRORE BAT SUERTATU DA DATU BASEAREKIN");
-				System.out.println(e.getMessage());
-				System.out.println(e.getErrorCode());
-			}
+		    }
+	    	catch(Exception e) {
+    			salbuespenaTratatu(e);
+    		}
 			saiakera++;
 		}while(saiakera<3);
     }
 
-    private void taldearenGirak() throws SQLException, IOException{
+    private void taldearenGirak() throws SQLException{
     	int saiakera=0;
     	do {
     		try {
@@ -637,11 +612,10 @@ public class DB {
 	                System.out.println(rs.getString(1)+" "+rs.getString(2)+" "+rs.getString(3)+" "+rs.getString(4));
 	            }
     			saiakera=3;
-    		}catch(SQLException e) {
-        		System.out.println("ERRORE BAT SUERTATU DA DATU BASEAREKIN");
-        		System.out.println(e.getMessage());
-        		System.out.println(e.getErrorCode());
-        	}
+    		}
+    		catch(Exception e) {
+    			salbuespenaTratatu(e);
+    		}
     		saiakera++;
     	}while(saiakera<3);
     }
@@ -652,7 +626,7 @@ public class DB {
      * @throws IOException
      * @throws SQLException
      */
-    private void girarenLekuak() throws SQLException, IOException{		
+    private void girarenLekuak() throws IOException{		
     	int saiakera=0;
 	    do{
 	    	try{
@@ -674,13 +648,10 @@ public class DB {
 	                System.out.println(rs.getString(1) + " " + rs.getString(2) + " " + rs.getString(3)+ " " + rs.getFloat(4)+"€");
 	            }
 	            saiakera=3;
-		    }catch(NumberFormatException e) {
-				System.out.println("Zenbakia ez den zeozer sartu duzu, saiatu berriro: ");  		
-			}catch(SQLException e) {
-				System.out.println("ERRORE BAT SUERTATU DA DATU BASEAREKIN");
-				System.out.println(e.getMessage());
-				System.out.println(e.getErrorCode());
-			}
+		    }
+	    	catch(Exception e) {
+    			salbuespenaTratatu(e);
+    		}
 			saiakera++;
 		}while(saiakera<3);
     }
@@ -692,7 +663,7 @@ public class DB {
      * @throws IOException
      * @throws SQLException
      */
-    private void diskoarenAbestiak() throws IOException,SQLException{
+    private void diskoarenAbestiak() throws IOException{
     	int saiakera=0;
 	    do{
 	    	try{
@@ -714,16 +685,15 @@ public class DB {
 	                System.out.println(rs.getString(1) + " " + rs.getInt(2) + " " + rs.getString(3));
 	            }
 	            saiakera=3;
-		    }catch(SQLException e) {
-				System.out.println("ERRORE BAT SUERTATU DA DATU BASEAREKIN");
-				System.out.println(e.getMessage());
-				System.out.println(e.getErrorCode());
-			}
+		    }
+	    	catch(Exception e) {
+    			salbuespenaTratatu(e);
+    		}
 			saiakera++;
 		}while(saiakera<3);
     }
 
-    private void diskoenPrezioa() throws IOException, SQLException{
+    private void diskoenPrezioa() throws IOException{
     	int saiakera=0;
     	do {
     		try {
@@ -739,11 +709,10 @@ public class DB {
     	            System.out.println(rs.getString(1) + " " + rs.getFloat(2));
     	        }
     			saiakera=3;
-    		}catch(SQLException e) {
-        		System.out.println("ERRORE BAT SUERTATU DA DATU BASEAREKIN");
-        		System.out.println(e.getMessage());
-        		System.out.println(e.getErrorCode());
-        	}
+    		}
+    		catch(Exception e) {
+    			salbuespenaTratatu(e);
+    		}
     		saiakera++;
     	}while(saiakera<3);
     }
@@ -753,7 +722,7 @@ public class DB {
      * @throws IOException
      * @throws SQLException
      */
-    private void taldeProduktoreBera() throws IOException,SQLException{
+    private void taldeProduktoreBera() throws IOException{
     	int saiakera=0;
 	    do{
 	    	try{
@@ -772,13 +741,10 @@ public class DB {
 	                System.out.println(rs.getString(1));
 	            }
 	            saiakera=3;
-		    }catch(NumberFormatException e) {
-				System.out.println("Zenbakia ez den zeozer sartu duzu, saiatu berriro: ");  		
-			}catch(SQLException e) {
-				System.out.println("ERRORE BAT SUERTATU DA DATU BASEAREKIN");
-				System.out.println(e.getMessage());
-				System.out.println(e.getErrorCode());
-			}
+		    }
+	    	catch(Exception e) {
+    			salbuespenaTratatu(e);
+    		}
 			saiakera++;
 		}while(saiakera<3);
     }
@@ -790,7 +756,7 @@ public class DB {
      * @throws SQLException
      */
     
-    private void giraIrabaziak() throws IOException,SQLException{
+    private void giraIrabaziak() throws IOException{
     	int saiakera=0;
 	    do{
 	    	try{
@@ -812,16 +778,15 @@ public class DB {
 	            rs.next();
 	            System.out.println(rs.getString(1));
 	            saiakera=3;
-		    }catch(SQLException e) {
-				System.out.println("ERRORE BAT SUERTATU DA DATU BASEAREKIN");
-				System.out.println(e.getMessage());
-				System.out.println(e.getErrorCode());
-			}
+		    }
+	    	catch(Exception e) {
+    			salbuespenaTratatu(e);
+    		}
 			saiakera++;
 		}while(saiakera<3);
     }
 
-    private void diskoIrabaziak() throws IOException,SQLException{
+    private void diskoIrabaziak() throws IOException{
     	int saiakera=0;
     	do {
     		try {
@@ -836,18 +801,15 @@ public class DB {
     	        rs.next();
     	        System.out.println(rs.getFloat(1));
     			saiakera=3;
-    		}catch(NumberFormatException e) {
-        		System.out.println("Zenbakia ez den zeozer sartu duzu, saiatu berriro: ");   		
-        	}catch(SQLException e) {
-        		System.out.println("ERRORE BAT SUERTATU DA DATU BASEAREKIN");
-        		System.out.println(e.getMessage());
-        		System.out.println(e.getErrorCode());
-        	}
+    		}
+    		catch(Exception e) {
+    			salbuespenaTratatu(e);
+    		}
     		saiakera++;
     	}while(saiakera<3);
     }
 
-    private void diskoAbestiakOrdenatu() throws IOException,SQLException{
+    private void diskoAbestiakOrdenatu() throws IOException{
     	int saiakera=0;
     	do {
     		try {
@@ -868,17 +830,16 @@ public class DB {
     	            System.out.println(rs.getInt(1) + " " + rs.getString(2) + " " + rs.getString(3) + " " + rs.getInt(4) + " " + rs.getInt(5));
     	        }
     			saiakera=3;
-    		}catch(SQLException e) {
-        		System.out.println("ERRORE BAT SUERTATU DA DATU BASEAREKIN");
-        		System.out.println(e.getMessage());
-        		System.out.println(e.getErrorCode());
-        	}
+    		}
+    		catch(Exception e) {
+    			salbuespenaTratatu(e);
+    		}
     		saiakera++;
     	}while(saiakera<3);
     	
     }
 
-    private void giraLekuakOrdenatuta()throws SQLException, IOException{	
+    private void giraLekuakOrdenatuta()throws IOException{	
     	int saiakera=0;
 	    do{
 	    	try{
@@ -903,13 +864,10 @@ public class DB {
 	                System.out.println(rs.getString(1) + " " + rs.getString(2) + " " + rs.getString(3));
 	            }
 	            saiakera=3;
-		    }catch(NumberFormatException e) {
-				System.out.println("Zenbakia ez den zeozer sartu duzu, saiatu berriro: ");  		
-			}catch(SQLException e) {
-				System.out.println("ERRORE BAT SUERTATU DA DATU BASEAREKIN");
-				System.out.println(e.getMessage());
-				System.out.println(e.getErrorCode());
-			}
+		    }
+	    	catch(Exception e) {
+    			salbuespenaTratatu(e);
+    		}
 			saiakera++;
 		}while(saiakera<3);
     }
@@ -920,7 +878,7 @@ public class DB {
      * @throws IOException
      * @throws SQLException
      */
-    private void lekuBatekoIrabaziak() throws IOException,SQLException{
+    private void lekuBatekoIrabaziak() throws IOException{
     	int saiakera=0;
 	    do{
 	    	try{
@@ -944,18 +902,15 @@ public class DB {
 	                System.out.println(rs.getString(1) +" "+ rs.getString(2) +" "+ rs.getString(3)+"€");
 	            }
 	            saiakera=3;
-		    }catch(NumberFormatException e) {
-				System.out.println("Zenbakia ez den zeozer sartu duzu, saiatu berriro: ");  		
-			}catch(SQLException e) {
-				System.out.println("ERRORE BAT SUERTATU DA DATU BASEAREKIN");
-				System.out.println(e.getMessage());
-				System.out.println(e.getErrorCode());
-			}
+		    }
+	    	catch(Exception e) {
+    			salbuespenaTratatu(e);
+    		}
 			saiakera++;
 		}while(saiakera<3);
 	}
 
-    private void milaBainoGehiago() throws IOException, SQLException{
+    private void milaBainoGehiago() throws IOException{
     	int saiakera=0;
     	do {
     		try {
@@ -981,15 +936,14 @@ public class DB {
     	            System.out.println(rs.getString(1) +" "+ rs.getInt(2) + " "+rs.getInt(3));
     	        }
     			saiakera=3;
-    		}catch(SQLException e) {
-        		System.out.println("ERRORE BAT SUERTATU DA DATU BASEAREKIN");
-        		System.out.println(e.getMessage());
-        		System.out.println(e.getErrorCode());
-        	}
+    		}
+    		catch(Exception e) {
+    			salbuespenaTratatu(e);
+    		}
     		saiakera++;
     	}while(saiakera<3);
     }
-    private void diskoErosketaEgin() throws IOException, SQLException {
+    private void diskoErosketaEgin() throws IOException {
     	int saiakera=0;
     	do {
     		try {
@@ -1021,19 +975,15 @@ public class DB {
 	            	System.out.println("Ez daude "+taldeIzen+" taldearen diskoak eskuragarri. Beste talde bat bilatu.");
 	            }
     			saiakera=3;
-    		}catch(NumberFormatException e) {
-        		System.out.println("Zenbakia ez den zeozer sartu duzu, saiatu berriro: ");   		
-        	}catch(SQLException e) {
-        		System.out.println("ERRORE BAT SUERTATU DA DATU BASEAREKIN");
-        		System.out.println(e.getMessage());
-        		System.out.println(e.getErrorCode());
-        		if (e.getErrorCode()==1062) System.out.println("Kode hori duen produktorea existitzen da.");
-        	}
+    		}
+    		catch(Exception e) {
+    			salbuespenaTratatu(e);
+    		}
     		saiakera++;
     	}while(saiakera<3);
     }
     
-    private void sarreraErosketaEgin() throws IOException, SQLException {
+    private void sarreraErosketaEgin() throws IOException {
     	int saiakera=0;
     	do {
     		try {
@@ -1068,19 +1018,15 @@ public class DB {
 	            }else {System.out.println("Ez daude "+taldeIzen+" taldearen girak eskuragarri, bilatu beste talde batenak.");}
 	           
     			saiakera=3;
-    		}catch(NumberFormatException e) {
-        		System.out.println("Zenbakia ez den zeozer sartu duzu, saiatu berriro: ");   		
-        	}catch(SQLException e) {
-        		System.out.println("ERRORE BAT SUERTATU DA DATU BASEAREKIN");
-        		System.out.println(e.getMessage());
-        		System.out.println(e.getErrorCode());
-        		if (e.getErrorCode()==1062) System.out.println("Kode hori duen produktorea existitzen da.");
-        	}
+    		}
+    		catch(Exception e) {
+    			salbuespenaTratatu(e);
+    		}
     		saiakera++;
     	}while(saiakera<3);
     }
     
-    private void sarrerakEguneratu(int kop, String hasData, String hiria, String izena) throws SQLException, IOException{
+    private void sarrerakEguneratu(int kop, String hasData, String hiria, String izena) throws IOException{
     	int saiakera=0;
     	do {
     		try {
@@ -1102,7 +1048,7 @@ public class DB {
     	}while(saiakera<3);
     }
     
-    private void diskoakEguneratu(int kop, String diskoIzen, int taldek) throws SQLException, IOException{
+    private void diskoakEguneratu(int kop, String diskoIzen, int taldek) throws IOException{
     	int saiakera=0;
     	do {
     		try {
@@ -1114,11 +1060,10 @@ public class DB {
     	    	ps.executeUpdate();
     	    	System.out.println("Datu basea egoki eguneratu da");
     			saiakera=3;
-        	}catch(SQLException e) {
-        		System.out.println("ERRORE BAT SUERTATU DA DATU BASEAREKIN");
-        		System.out.println(e.getMessage());
-        		System.out.println(e.getErrorCode());
         	}
+    		catch(Exception e) {
+    			salbuespenaTratatu(e);
+    		}
     		saiakera++;
     	}while(saiakera<3);
     }
@@ -1146,7 +1091,7 @@ public class DB {
     /**
      * 
      * @param pKonprobatzekoString
-     * @param luzera
+     * @param luzera pKonprobatzekoString izan behar duen gehienezko luzeera
      * @return
      * @throws StringLuzeegiaException
      */
@@ -1173,6 +1118,9 @@ public class DB {
     		System.out.println(eaux.getErrorCode());
     		if (eaux.getErrorCode()==1062) System.out.println("Kode hori duen produktorea existitzen da.");
     	}
+    	else if(e instanceof DataFormatException) {
+    		DataFormatException eaux = (DataFormatException) e;
+    		System.out.println("Sartu duzun data formatua ez da egokia.");
+    	}
     }
 }
-
