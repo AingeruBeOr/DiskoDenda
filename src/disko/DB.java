@@ -125,22 +125,22 @@ public class DB {
                 girarenBukHasDatakAldatu();
                 break;
             case 6:
-                taldeKaleratu();
+                taldeaKaleratu();
                 break;
             case 7:
-                lekuakKenduGiratik();
+                lekuakGiratikKendu();
                 break;
             case 8:
-                taldearenGirak();
+                taldearenGirakErakutsi();
                 break;
             case 9:
-                girarenLekuak();
+                girarenLekuakErakutsi();
                 break;
             case 10:
-                diskoarenAbestiak();
+                diskoarenAbestiakErakutsi();
                 break;
             case 11:
-                diskoenPrezioa();
+                diskoenPrezioakErakutsi();
                 break;
             case 12:
                 taldeProduktoreBera();
@@ -152,10 +152,10 @@ public class DB {
                 diskoIrabaziak();
                 break;
             case 15:
-                diskoAbestiakOrdenatu();
+                diskoaAbestiazOrdenatuaErakutsi();
                 break;
             case 16:
-                giraLekuakOrdenatuta();
+                giraLekuezOrdenatutaErakutsi();
                 break;
             case 17:
             	lekuBatekoIrabaziak();
@@ -534,7 +534,7 @@ public class DB {
      * @throws IOException
      * @throws SQLException
      */
-    private void taldeKaleratu() throws IOException{
+    private void taldeaKaleratu() throws IOException{
     	int saiakera=0;
 	    do{
 	    	try{
@@ -557,7 +557,7 @@ public class DB {
      * @throws IOException
      * @throws SQLException
      */
-    private void lekuakKenduGiratik() throws IOException{
+    private void lekuakGiratikKendu() throws IOException{
     	int saiakera=0;
     	String erantzuna;
 	    do{
@@ -596,7 +596,7 @@ public class DB {
 		}while(saiakera<3);
     }
 
-    private void taldearenGirak() throws SQLException{
+    private void taldearenGirakErakutsi() throws SQLException{
     	int saiakera=0;
     	do {
     		try {
@@ -626,7 +626,7 @@ public class DB {
      * @throws IOException
      * @throws SQLException
      */
-    private void girarenLekuak() throws IOException{		
+    private void girarenLekuakErakutsi() throws IOException{		
     	int saiakera=0;
 	    do{
 	    	try{
@@ -663,7 +663,7 @@ public class DB {
      * @throws IOException
      * @throws SQLException
      */
-    private void diskoarenAbestiak() throws IOException{
+    private void diskoarenAbestiakErakutsi() throws IOException{
     	int saiakera=0;
 	    do{
 	    	try{
@@ -693,7 +693,7 @@ public class DB {
 		}while(saiakera<3);
     }
 
-    private void diskoenPrezioa() throws IOException{
+    private void diskoenPrezioakErakutsi() throws IOException{
     	int saiakera=0;
     	do {
     		try {
@@ -809,7 +809,7 @@ public class DB {
     	}while(saiakera<3);
     }
 
-    private void diskoAbestiakOrdenatu() throws IOException{
+    private void diskoaAbestiazOrdenatuaErakutsi() throws IOException{
     	int saiakera=0;
     	do {
     		try {
@@ -839,7 +839,7 @@ public class DB {
     	
     }
 
-    private void giraLekuakOrdenatuta()throws IOException{	
+    private void giraLekuezOrdenatutaErakutsi()throws IOException{	
     	int saiakera=0;
 	    do{
 	    	try{
