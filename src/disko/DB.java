@@ -4,11 +4,16 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.*;
+import java.util.zip.DataFormatException;
+
+import Salbuespenak.StringLuzeegiaException;
 //
 public class DB {
     private BufferedReader br;
     private Connection konexioa;
-    private static int pasahitza=123;
+    private final static int pasahitza=123;
+    
+    //erroreak: https://dev.mysql.com/doc/mysql-errors/8.0/en/server-error-reference.html
     
     public static void main(String[] args) throws NumberFormatException, IOException, SQLException {
         DB db = new DB();
@@ -18,6 +23,21 @@ public class DB {
     private DB(){
         br = new BufferedReader(new InputStreamReader(System.in));
         konektatu();
+    }
+    
+    private void konektatu(){
+        try{
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            String zerbitzaria = "jdbc:mysql://localhost:3306/diskodenda";
+            String erabiltzailea = "root";
+            String pasahitza = "";
+            konexioa = DriverManager.getConnection(zerbitzaria,erabiltzailea,pasahitza);
+        }
+        catch(Exception e){
+        	System.out.println("Errorea egon da datu basea kargatzean. Mesedez datu-datu basera konektatu eta saiatu berriro");
+        	System.exit(0);
+            //e.printStackTrace();
+        }
     }
     
     private boolean pasahitzaZuzenaDa() throws IOException{
@@ -36,19 +56,7 @@ public class DB {
     	return false;
     }
 
-    private void konektatu(){
-        try{
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            String zerbitzaria = "jdbc:mysql://localhost:3306/diskodenda";
-            String erabiltzailea = "root";
-            String pasahitza = "";
-            konexioa = DriverManager.getConnection(zerbitzaria,erabiltzailea,pasahitza);
-        }
-        catch(Exception e){
-        	System.out.println("Errorea egon da datu basea kargatzean.");
-            //e.printStackTrace();
-        }
-    }
+    
 
     private void menuErakutsi() throws NumberFormatException, IOException, SQLException{
     	int aukera = -1;
@@ -188,7 +196,7 @@ public class DB {
     	do {
     		try {
         		System.out.println("Sartu produktorearen izena: ");
-            	String izena = br.readLine();
+            	String izena = stringEgokiaDa(br.readLine(), 15);
             	System.out.println("Sartu produktorearen kodea: ");
             	int kodea = Integer.parseInt(br.readLine());
             	System.out.println("Sartu produktorearen telefono zenbakia: ");
@@ -199,9 +207,17 @@ public class DB {
             	ps.setInt(3, telf);
             	ps.executeUpdate();
             	saiakera=3;
-        	}catch(NumberFormatException e) {
-        		System.out.println("Zenbakia ez den zeozer sartu duzu, saiatu berriro: ");   		
-        	}catch(SQLException e) {
+            
+        	}
+    		catch(StringLuzeegiaException e) {
+            	e.mezuaInprimatu();
+            }
+    		catch(NumberFormatException e) {
+        		System.out.println(e.getMessage());
+        		System.out.println(e.getLocalizedMessage());
+        		System.out.println("Zenbakia ez den zeozer sartu duzu edo zenbakia handiegia da.");   		
+        	}
+    		catch(SQLException e) {
         		System.out.println("ERRORE BAT SUERTATU DA DATU BASEAREKIN");
         		System.out.println(e.getMessage());
         		System.out.println(e.getErrorCode());
@@ -223,13 +239,13 @@ public class DB {
 			try {
 				//Taldea sartzeko:
 		    	System.out.println("Sartu taldearen izena: ");
-		    	String izena= br.readLine();
+		    	String izena = stringEgokiaDa(br.readLine(), 15);
 				System.out.println("Sartu taldearen kodea: ");
-				int kode=Integer.parseInt(br.readLine());
+				int kode = Integer.parseInt(br.readLine());
 				System.out.println("Sartu taldearen deskribapena: ");
-		    	String desk= br.readLine();
+		    	String desk = stringEgokiaDa(br.readLine(), 15);
 				System.out.println("Sartu produktorearen kodea:");
-				int pKode=Integer.parseInt(br.readLine());
+				int pKode = Integer.parseInt(br.readLine());
 				PreparedStatement ps = konexioa.prepareStatement("INSERT INTO TALDE VALUES(?, ?, ?, ?)");
 		    	ps.setString(2,izena);
 		    	ps.setInt(1,kode);
@@ -253,9 +269,14 @@ public class DB {
 					hizki=br.readLine();
 				}while(hizki.equalsIgnoreCase("B"));
 				saiakera=3;
-			}catch(NumberFormatException e) {
-				System.out.println("Zenbakia ez den zeozer sartu duzu, saiatu berriro: ");  		
-			}catch(SQLException e) {
+			}
+			catch(StringLuzeegiaException e) {
+				e.mezuaInprimatu();
+			}
+			catch(NumberFormatException e) {
+        		System.out.println("Zenbakia ez den zeozer sartu duzu edo zenbakia handiegia da.");   		
+			}
+			catch(SQLException e) {
 				System.out.println("ERRORE BAT SUERTATU DA DATU BASEAREKIN");
 				System.out.println(e.getMessage());
         		System.out.println(e.getErrorCode());
@@ -1021,7 +1042,7 @@ public class DB {
 	            		"LEKUAN_JO.Herrialdea=LEKUA.Herrialdea");
 	            ps.setString(1,taldeIzen);
 	            ResultSet rs = ps.executeQuery();
-	            System.out.println("Hauek dira "+taldeIzen+" taldeak egiten dituen girak eta lekuak:");
+	            System.out.println("Hauek dira " + taldeIzen + " taldeak egiten dituen girak eta lekuak:");
 	            while(rs.next()){
 	                System.out.println(rs.getString(1)+" "+rs.getString(2)+" "+rs.getString(3)+" "+rs.getString(4)+" "+rs.getFloat(5));
 	            }
@@ -1047,6 +1068,37 @@ public class DB {
         	}
     		saiakera++;
     	}while(saiakera<3);
+    }
+    
+    /**
+     * String bat UUUU-HH-EE formatuan idatzita dagoen konprobatzen du.
+     * @param pKonprobatzeko
+     * @throws DataFormatException
+     */
+    private void konprobatuDataFormatua(String pKonprobatzeko) throws DataFormatException{
+    	char karakterea;
+    	boolean bukatu = false;
+    	int i = 0;
+    	while(i < 9 && !bukatu) {
+        	karakterea = pKonprobatzeko.charAt(i);
+        	if(i == 0 || i == 1 || i == 2 || i ==3 || i == 5 || i == 6 || i == 8 || i == 9) {
+        		if(!Character.isDigit(karakterea)) bukatu = true;
+        	}
+        	else if(karakterea != '-') bukatu = true;
+    	}
+    	if(bukatu) throw new DataFormatException(); 
+    }
+    
+    /**
+     * 
+     * @param pKonprobatzekoString
+     * @param luzera
+     * @return
+     * @throws StringLuzeegiaException
+     */
+    private String stringEgokiaDa(String pKonprobatzekoString, int luzera) throws StringLuzeegiaException{
+    	if(pKonprobatzekoString.length() <= luzera) throw new StringLuzeegiaException();
+    	return pKonprobatzekoString;
     }
 }
 
