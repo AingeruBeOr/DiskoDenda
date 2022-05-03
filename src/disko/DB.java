@@ -90,7 +90,8 @@ public class DB {
                 System.out.println("17.- Talde batek hiri batean lortutako irabaziak.");
                 System.out.println("18.- 1000€ baino gehiago irabazi duten taldeak erakutsi.");
                 System.out.println("19.- Sarrera erosi:");
-                System.out.println("20.- Irten");
+                System.out.println("20.- Diskoa erosi:");
+                System.out.println("21.- Irten");
                 System.out.println("\n\nAukera bat sartu: ");
                 aukera = Integer.parseInt(br.readLine());
                 aukeraIrakurri(aukera);
@@ -166,6 +167,9 @@ public class DB {
             	sarreraErosketaEgin();
             	break;
             case 20:
+            	diskoErosketaEgin();
+            	break;
+            case 21:
                 System.exit(0);
                 break;
             default:
@@ -507,28 +511,6 @@ public class DB {
 			}
 			saiakera++;
 		}while(saiakera<3);
-    }
-
-    private void sarrerakEguneratu(int kop, String hasData, String hiria, String izena) throws SQLException, IOException{
-    	int saiakera=0;
-    	do {
-    		try {
-    			PreparedStatement ps = konexioa.prepareStatement("UPDATE Lekuan_Jo SET SaldutakoSarrerak = (SaldutakoSarrerak + ?)"+ 
-    															" WHERE Hiria = ? AND izena = ? AND hasData= ?");
-    	    	ps.setInt(1,kop);
-    	    	ps.setString(2,hiria);
-    	    	ps.setString(3,izena);
-    	    	ps.setString(4, hasData);
-    	    	ps.executeUpdate();
-    	    	System.out.println("Datu basea egoki eguneratu da");
-    			saiakera=3;
-        	}catch(SQLException e) {
-        		System.out.println("ERRORE BAT SUERTATU DA DATU BASEAREKIN");
-        		System.out.println(e.getMessage());
-        		System.out.println(e.getErrorCode());
-        	}
-    		saiakera++;
-    	}while(saiakera<3);
     }
     
     /**
@@ -1027,6 +1009,49 @@ public class DB {
     		saiakera++;
     	}while(saiakera<3);
     }
+    private void diskoErosketaEgin() throws IOException, SQLException {
+    	int saiakera=0;
+    	do {
+    		try {
+    			System.out.println("Sartu taldearen izena:");
+	            String taldeIzen = br.readLine();
+	            PreparedStatement ps = konexioa.prepareStatement(
+	            		"SELECT TALDE.IZENA, TALDE.KODEA, DISKO.IZENA DISKO.PREZIOA " + 
+	            		"FROM TALDE, DISKO " + 
+	            		"WHERE TALDE.izena = ? and TALDE.kode = DISKO.TALDEK AND ");
+	            ps.setString(1,taldeIzen);
+	            ResultSet rs = ps.executeQuery();
+	            System.out.println("Hauek dira " + taldeIzen + " taldeak dituen diskoak:");
+	            int taldek=0;
+	            boolean daude=false;
+	            while(rs.next()){
+	                System.out.println(rs.getString(1)+" "+rs.getInt(2)+" "+rs.getString(3)+" "+rs.getFloat(4));
+	                taldek=rs.getInt(2);
+	                daude=true;
+	            }
+	            if(daude) {
+	            	System.out.println("Aukeratu horietako bat: ");
+		            System.out.println("Sartu diskoaren izena: ");
+		            String diskoIzen=br.readLine();
+		            System.out.println("Sartu erosi nahi dituzun unitate kopurua: ");
+		            int kop= Integer.parseInt(br.readLine());
+		            this.diskoakEguneratu(kop, diskoIzen, taldek);
+		            System.out.println("Erosketa zuzen burtu da.");
+	            }else {
+	            	System.out.println("Ez daude "+taldeIzen+" taldearen diskoak eskuragarri. Beste talde bat bilatu.");
+	            }
+    			saiakera=3;
+    		}catch(NumberFormatException e) {
+        		System.out.println("Zenbakia ez den zeozer sartu duzu, saiatu berriro: ");   		
+        	}catch(SQLException e) {
+        		System.out.println("ERRORE BAT SUERTATU DA DATU BASEAREKIN");
+        		System.out.println(e.getMessage());
+        		System.out.println(e.getErrorCode());
+        		if (e.getErrorCode()==1062) System.out.println("Kode hori duen produktorea existitzen da.");
+        	}
+    		saiakera++;
+    	}while(saiakera<3);
+    }
     
     private void sarreraErosketaEgin() throws IOException, SQLException {
     	int saiakera=0;
@@ -1043,20 +1068,25 @@ public class DB {
 	            ps.setString(1,taldeIzen);
 	            ResultSet rs = ps.executeQuery();
 	            System.out.println("Hauek dira " + taldeIzen + " taldeak egiten dituen girak eta lekuak:");
+	            boolean daude=false;
 	            while(rs.next()){
+	            	daude=true;
 	                System.out.println(rs.getString(1)+" "+rs.getString(2)+" "+rs.getString(3)+" "+rs.getString(4)+" "+rs.getFloat(5));
 	            }
-	            System.out.println("Aukeratu horietako bat: ");
-	            System.out.println("Sartu hasiera data (UUUU-HH-EE formatuan): ");
-	            String hasData=br.readLine();
-	            System.out.println("Sartu hiriaren izena: ");
-	            String hiria=br.readLine();
-	            System.out.println("Sartu lekuaren izena: ");
-	            String lekuIzen=br.readLine();
-	            System.out.println("Sartu erosi nahi dituzun sarrera kopurua: ");
-	            int kop= Integer.parseInt(br.readLine());
-	            sarrerakEguneratu(kop, hasData, hiria, lekuIzen);
-	            System.out.println("Erosketa zuzen burtu da.");
+	            if(daude) {
+	            	 System.out.println("Aukeratu horietako bat: ");
+	 	            System.out.println("Sartu hasiera data (UUUU-HH-EE formatuan): ");
+	 	            String hasData=br.readLine();
+	 	            System.out.println("Sartu hiriaren izena: ");
+	 	            String hiria=br.readLine();
+	 	            System.out.println("Sartu lekuaren izena: ");
+	 	            String lekuIzen=br.readLine();
+	 	            System.out.println("Sartu erosi nahi dituzun sarrera kopurua: ");
+	 	            int kop= Integer.parseInt(br.readLine());
+	 	            sarrerakEguneratu(kop, hasData, hiria, lekuIzen);
+	 	            System.out.println("Erosketa zuzen burtu da.");
+	            }else {System.out.println("Ez daude "+taldeIzen+" taldearen girak eskuragarri, bilatu beste talde batenak.");}
+	           
     			saiakera=3;
     		}catch(NumberFormatException e) {
         		System.out.println("Zenbakia ez den zeozer sartu duzu, saiatu berriro: ");   		
@@ -1069,6 +1099,50 @@ public class DB {
     		saiakera++;
     	}while(saiakera<3);
     }
+    
+    private void sarrerakEguneratu(int kop, String hasData, String hiria, String izena) throws SQLException, IOException{
+    	int saiakera=0;
+    	do {
+    		try {
+    			PreparedStatement ps = konexioa.prepareStatement("UPDATE Lekuan_Jo SET SaldutakoSarrerak = (SaldutakoSarrerak + ?)"+ 
+    															" WHERE Hiria = ? AND izena = ? AND hasData= ?");
+    	    	ps.setInt(1,kop);
+    	    	ps.setString(2,hiria);
+    	    	ps.setString(3,izena);
+    	    	ps.setString(4, hasData);
+    	    	ps.executeUpdate();
+    	    	System.out.println("Datu basea egoki eguneratu da");
+    			saiakera=3;
+        	}catch(SQLException e) {
+        		System.out.println("ERRORE BAT SUERTATU DA DATU BASEAREKIN");
+        		System.out.println(e.getMessage());
+        		System.out.println(e.getErrorCode());
+        	}
+    		saiakera++;
+    	}while(saiakera<3);
+    }
+    
+    private void diskoakEguneratu(int kop, String diskoIzen, int taldek) throws SQLException, IOException{
+    	int saiakera=0;
+    	do {
+    		try {
+    			PreparedStatement ps = konexioa.prepareStatement("UPDATE DISKO SET SaldutakoKopiak = (SaldutakoKopiak + ?)"+ 
+    															" WHERE Disko.izen=? AND DISKO.taldek=?");
+    	    	ps.setInt(1,kop);
+    	    	ps.setString(2,diskoIzen);
+    	    	ps.setInt(3,taldek);
+    	    	ps.executeUpdate();
+    	    	System.out.println("Datu basea egoki eguneratu da");
+    			saiakera=3;
+        	}catch(SQLException e) {
+        		System.out.println("ERRORE BAT SUERTATU DA DATU BASEAREKIN");
+        		System.out.println(e.getMessage());
+        		System.out.println(e.getErrorCode());
+        	}
+    		saiakera++;
+    	}while(saiakera<3);
+    }
+   
     
     /**
      * String bat UUUU-HH-EE formatuan idatzita dagoen konprobatzen du.
