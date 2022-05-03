@@ -389,9 +389,9 @@ public class DB {
 	    	    	errore++;
 	    	    	
 	    	    	//Hiria eta gira konektatzeko:
-	    	    	ps2.setString(1,herrialde);
+	    	    	ps2.setString(1,lekua);
 	    	    	ps2.setString(2,hiriIzen);
-	    	    	ps2.setString(3,lekua);
+	    	    	ps2.setString(3,herrialde);
 	    	    	ps2.setString(4, hData);
 	    	    	ps2.setInt(5, tKode);
 	    	    	ps2.setFloat(6, prezioa);
@@ -468,9 +468,9 @@ public class DB {
 	    	    	ps.executeUpdate();
 	    	    	
 	    	    	//Hiria eta gira konektatzeko:
-	    	    	ps2.setString(1,herrialde);
+	    	    	ps2.setString(1,lekua);
 	    	    	ps2.setString(2,hiriIzen);
-	    	    	ps2.setString(3,lekua);
+	    	    	ps2.setString(3,herrialde);
 	    	    	ps2.setString(4, hasData);
 	    	    	ps2.setInt(5, taldeK);
 	    	    	ps2.setFloat(6, prezioa);
@@ -485,9 +485,9 @@ public class DB {
 				System.out.println("Zenbakia ez den zeozer sartu duzu, saiatu berriro: ");  		
 			}catch(SQLException e) {
 				//System.out.println("Lekua jada existitzen da datu basean, baina girari gehituko zaio.");
-				ps2.setString(1,herrialde);
+				ps2.setString(1,lekua);
     	    	ps2.setString(2,hiriIzen);
-    	    	ps2.setString(3,lekua);
+    	    	ps2.setString(3,herrialde);
     	    	ps2.setString(4, hasData);
     	    	ps2.setInt(5, taldeK);
     	    	ps2.setFloat(6, prezioa);
@@ -598,7 +598,7 @@ public class DB {
 	            	PreparedStatement ps = konexioa.prepareStatement("DELETE FROM Lekuan_Jo WHERE Hiria = ? AND "
 	            																			+ "Herrialdea = ? AND "
 	            																			+ "HasData = ? AND "
-	            																			+ "TaldeK = ? AND"
+	            																			+ "TaldeK = ? AND "
 	            																			+ "Izena = ?");
 	            	ps.setString(1,hiriIzen);
 	            	ps.setString(2, hiriHerrialde);
@@ -628,13 +628,13 @@ public class DB {
     			System.out.println("Sartu taldearen izena:");
 	            String taldeIzen = br.readLine();
 	            PreparedStatement ps = konexioa.prepareStatement(
-	            		"SELECT GIRA.hasData\n" + 
-	            		"FROM GIRA, TALDE\n" + 
-	            		"WHERE TALDE.izena = ? and TALDE.kode = GIRA.kode\n");
+	            		"SELECT GIRA.hasData, LEKUAN_JO.HERRIALDEA, LEKUAN_JO.HIRIA, LEKUAN_JO.IZENA " + 
+	            		"FROM GIRA, TALDE, LEKUAN_JO " + 
+	            		"WHERE TALDE.izena = ? and TALDE.kodea = GIRA.taldek and Gira.hasdata=lekuan_jo.hasdata and gira.taldek=lekuan_jo.taldek");
 	            ps.setString(1,taldeIzen);
 	            ResultSet rs = ps.executeQuery();
 	            while(rs.next()){
-	                System.out.println(rs.getString(1));
+	                System.out.println(rs.getString(1)+" "+rs.getString(2)+" "+rs.getString(3)+" "+rs.getString(4));
 	            }
     			saiakera=3;
     		}catch(SQLException e) {
@@ -661,19 +661,17 @@ public class DB {
 	            System.out.println("Sartu zein den "+taldeIzen+" taldetik ikusi nahi duzun giraren hasiera data (UUUU-HH-EE formatuan): ");
 	    		String data=br.readLine();
 	            PreparedStatement ps = konexioa.prepareStatement(
-	                    "SELECT LEKUA.Hiria, LEKUA.Herrialdea, LEKUA.Izena, LEKUA.Prezioa " +
-	                    "FROM LEKUA, TALDE, GIRA, LEKUAN_JO" +
+	                    "SELECT LEKUAN_JO.Hiria, LEKUAN_JO.Herrialdea, LEKUAN_JO.Izena, LEKUAN_JO.Prezioa " +
+	                    "FROM TALDE, GIRA, LEKUAN_JO " +
 	                    "WHERE TALDE.kodea = GIRA.TaldeK AND " +
-	                    		"GIRA.TaldeK=LEKUAN_JO.TaldeK AND GIRA.hasData=LEKUAN_JO.hasData AND"+
-	                    		"LEKUA.Herrialdea=LEKUAN_JO.Herrialdea AND LEKUA.Izena=LEKUAN_JO.Izena AND"+
-	                    		"LEKUAN_JO.Hiria=LEKUA.Hiria AND"+
+	                    		"GIRA.TaldeK=LEKUAN_JO.TaldeK AND GIRA.hasData=LEKUAN_JO.hasData AND "+
 	                            "GIRA.hasData = ? AND " +
 	                            "TALDE.Izena = ?");
 	            ps.setString(1,data);
 	            ps.setString(2,taldeIzen);
 	            ResultSet rs = ps.executeQuery();
 	            while(rs.next()){
-	                System.out.println(rs.getString(1) + " " + rs.getString(2) + " " + rs.getString(3));
+	                System.out.println(rs.getString(1) + " " + rs.getString(2) + " " + rs.getString(3)+ " " + rs.getFloat(4)+"€");
 	            }
 	            saiakera=3;
 		    }catch(NumberFormatException e) {
@@ -703,7 +701,7 @@ public class DB {
 	            System.out.println("Sartu " + taldeIzen + " taldearen diskoaren izena:");
 	            String diskoIzen = br.readLine();
 	            PreparedStatement ps = konexioa.prepareStatement(
-	                    "SELECT DISKO.Kodea, DISKO.Izena, ABESTIA.* " +
+	                    "SELECT  DISKO.Izena, ABESTIA.zenbakia, abestia.izena " +
 	                    "FROM TALDE, DISKO, ABESTIA " +
 	                    "WHERE TALDE.kodea = DISKO.TaldeK AND " +
 	                            "DISKO.Kodea = ABESTIA.DiskoK AND " +
@@ -713,7 +711,7 @@ public class DB {
 	            ps.setString(2,taldeIzen);
 	            ResultSet rs = ps.executeQuery();
 	            while(rs.next()){
-	                System.out.println(rs.getString(1) + " " + rs.getString(2) + " " + rs.getString(3));
+	                System.out.println(rs.getString(1) + " " + rs.getInt(2) + " " + rs.getString(3));
 	            }
 	            saiakera=3;
 		    }catch(SQLException e) {
@@ -731,14 +729,11 @@ public class DB {
     		try {
     			System.out.println("Sartu talde baten izena: ");
     	        String taldeIzen = br.readLine();
-    	        System.out.println("Sartu disko baten izena: ");
-    	        String diskoIzen = br.readLine();
     	        PreparedStatement ps = konexioa.prepareStatement(
-    	        		"SELECT DISKO.izena, DISKO.prezioa\n" + 
-    	        		"FROM TALDE, DISKO\n" + 
-    	        		"WHERE TALDE.izena = ? and DISKO.izena= ? and TALDE.kodea = DISKO.TaldeK\n");
+    	        		"SELECT DISKO.izena, DISKO.prezioa " + 
+    	        		"FROM TALDE, DISKO " + 
+    	        		"WHERE TALDE.izena = ? and TALDE.kodea = DISKO.TaldeK ");
     	        ps.setString(1, taldeIzen);
-    	        ps.setString(2, diskoIzen);
     	        ResultSet rs = ps.executeQuery();
     	        while(rs.next()){
     	            System.out.println(rs.getString(1) + " " + rs.getFloat(2));
@@ -765,7 +760,7 @@ public class DB {
 	    		System.out.println("Sartu taldearen izena:");
 	            String taldeIzen = br.readLine();
 	            PreparedStatement ps = konexioa.prepareStatement(
-	                    "SELECT TALDE.Izena " +
+	                    "SELECT distinct TALDE.Izena " +
 	                    "FROM TALDE, PRODUKTOREA " +
 	                    "WHERE TALDE.ProdKode IN " +
 	                            "(SELECT TALDE.ProdKode " +
@@ -804,16 +799,13 @@ public class DB {
 	            System.out.println("Sartu girak identifikatzen duen hasiera data: ");
 	            String giraData = br.readLine();
 	            PreparedStatement ps = konexioa.prepareStatement(
-	                    "SELECT SUM(LEKUA.SaldutakoSarrerak * LEKUA.Prezioa) " +
-	                    "FROM TALDE, LEKUA, GIRA, LEKUAN_JO " +
+	                    "SELECT SUM(LEKUAN_JO.SaldutakoSarrerak * LEKUAN_JO.Prezioa) " +
+	                    "FROM TALDE, GIRA, LEKUAN_JO " +
 	                    "WHERE TALDE.izena = ? and " +
 	                    	"GIRA.TaldeK = TALDE.Kodea and " +
 	                        "GIRA.TaldeK = LEKUAN_JO.TaldeK and " +
 	                        "GIRA.HasData = LEKUAN_JO.HasData and " +
-	                        "LEKUAN_JO.HasData = ? and " +
-	                        "LEKUA.Herrialdea = LEKUAN_JO.herrialdea and " +
-	                        "LEKUA.Hiria = LEKUAN_JO.Hiria and"+
-	                        "LEKUA.Izena = LEKUAN_JO.Izena");
+	                        "LEKUAN_JO.HasData = ? ");
 	            ps.setString(1,taldeIzen);
 	            ps.setString(2,giraData);
 	            ResultSet rs = ps.executeQuery();
@@ -836,13 +828,13 @@ public class DB {
     			System.out.println("Sartu disko baten izena: ");
     	        String diskoIzen = br.readLine();
     	        PreparedStatement ps = konexioa.prepareStatement(
-    	        		"SELECT SUM(prezioa * saldutakoKopiak) \n" + 
-    	        		"FROM DISKO\n" + 
-    	        		"WHERE DISKO.Izena = ? \n");
+    	        		"SELECT SUM(prezioa * saldutakoKopiak) " + 
+    	        		"FROM DISKO " + 
+    	        		"WHERE DISKO.Izena = ? ");
     	        ps.setString(1,diskoIzen);
     	        ResultSet rs = ps.executeQuery();
     	        rs.next();
-    	        System.out.println(rs.getFloat(2));
+    	        System.out.println(rs.getFloat(1));
     			saiakera=3;
     		}catch(NumberFormatException e) {
         		System.out.println("Zenbakia ez den zeozer sartu duzu, saiatu berriro: ");   		
@@ -861,14 +853,14 @@ public class DB {
     		try {
     			System.out.println("Sartu disko baten izena: ");
     	    	String diskoIzena = br.readLine();
-    	    	System.out.println("Sartu disko baten kodea: ");
+    	    	System.out.println("Sartu taldearen izena ");
     	    	String taldeIzena = br.readLine();
     	    	PreparedStatement ps = konexioa.prepareStatement(
-    	    			"SELECT  DISKO.Kodea, DISKO.Izena, ABESTIA.*\n" + 
-    	    			"FROM TALDE, DISKO, ABESTIA\n" + 
-    	    			"WHERE TALDE.kodea = DISKO.TaldeK AND\n" + 
-    	    			"DISKO.Kodea=ABESTIA.DiskoK AND DISKO.Izena = ? AND TALDE.Izena= ? \n" + 
-    	    			"ORDER BY ABESTIA.Zenbakia\n");
+    	    			"SELECT  DISKO.Kodea, DISKO.Izena, ABESTIA.* " + 
+    	    			"FROM TALDE, DISKO, ABESTIA " + 
+    	    			"WHERE TALDE.kodea = DISKO.TaldeK AND " + 
+    	    			"DISKO.Kodea=ABESTIA.DiskoK AND DISKO.Izena = ? AND TALDE.Izena= ?  " + 
+    	    			"ORDER BY ABESTIA.Zenbakia ");
     	    	ps.setString(1,diskoIzena);
     	        ps.setString(2,taldeIzena);
     	        ResultSet rs = ps.executeQuery();
@@ -895,20 +887,20 @@ public class DB {
 	            System.out.println("Sartu zein den "+taldeIzen+" taldetik ikusi nahi duzun giraren hasiera data (UUUU-HH-EE formatuan): ");
 	    		String data=br.readLine();
 	            PreparedStatement ps = konexioa.prepareStatement(
-	                    "SELECT HIRIA.Izena, LEKUA.Izena" +
-	                    "FROM LEKUA, TALDE, GIRA, LEKUAN_JO" +
+	                    "SELECT  LEKUA.Izena, LEKUA.HIRIA, LEKUA.HERRIALDEA " +
+	                    "FROM LEKUA, TALDE, GIRA, LEKUAN_JO " +
 	                    "WHERE TALDE.kodea = GIRA.TaldeK AND " +
-	                    		"GIRA.TaldeK=LEKUAN_JO.TaldeK AND GIRA.hasData=LEKUAN_JO.hasData AND"+
-	                    		"LEKUA.Herrialdea=LEKUAN_JO.Herrialdea AND LEKUA.Izena=LEKUAN_JO.Izena AND"+
-	                    		"LEKUA.Hiria=LEKUAN_JO.Hiria AND"+
+	                    		"GIRA.TaldeK=LEKUAN_JO.TaldeK AND GIRA.hasData=LEKUAN_JO.hasData AND "+
+	                    		"LEKUA.Herrialdea=LEKUAN_JO.Herrialdea AND LEKUA.Izena=LEKUAN_JO.Izena AND "+
+	                    		"LEKUA.Hiria=LEKUAN_JO.Hiria AND "+
 	                            "GIRA.hasData = ? AND " +
 	                            "TALDE.Izena = ?"+
-	                    "ORDER BY HIRIA.Izena");
+	                    "ORDER BY LEKUA.Izena");
 	            ps.setString(1,data);
 	            ps.setString(2,taldeIzen);
 	            ResultSet rs = ps.executeQuery();
 	            while(rs.next()){
-	                System.out.println(rs.getString(1) + " " + rs.getString(2));
+	                System.out.println(rs.getString(1) + " " + rs.getString(2) + " " + rs.getString(3));
 	            }
 	            saiakera=3;
 		    }catch(NumberFormatException e) {
@@ -941,15 +933,15 @@ public class DB {
 	                    "FROM LEKUA, TALDE, GIRA, LEKUAN_JO " +
 	                    "WHERE TALDE.Izena=? AND " +
 	                        "TALDE.Kodea=GIRA.TaldeK AND " +
-	                        "GIRA.TaldeK=LEKUAN_JO.TaldeK AND GIRA.hasData=LEKUAN_JO.hasData AND"+
-                    		"LEKUA.Herrialdea=LEKUAN_JO.Herrialdea AND LEKUA.Izena=LEKUAN_JO.Izena AND"+
-                    		"LEKUA.Hiria=LEKUAN_JO.Hiria AND"+
+	                        "GIRA.TaldeK=LEKUAN_JO.TaldeK AND GIRA.hasData=LEKUAN_JO.hasData AND "+
+                    		"LEKUA.Herrialdea=LEKUAN_JO.Herrialdea AND LEKUA.Izena=LEKUAN_JO.Izena AND "+
+                    		"LEKUA.Hiria=LEKUAN_JO.Hiria AND "+
 	                        "LEKUA.Izena=?");
 	            ps.setString(1,taldeIzen);
 	            ps.setString(2, leku);
 	            ResultSet rs = ps.executeQuery();
 	            while(rs.next()){
-	                System.out.println(rs.getString(1) +" "+ rs.getString(2) +" "+ rs.getString(3));
+	                System.out.println(rs.getString(1) +" "+ rs.getString(2) +" "+ rs.getString(3)+"€");
 	            }
 	            saiakera=3;
 		    }catch(NumberFormatException e) {
@@ -977,10 +969,10 @@ public class DB {
     	                "FROM LEKUA, TALDE, GIRA, LEKUAN_JO " +
     	                "WHERE TALDE.Izena=? AND " +
     	                    "TALDE.Kodea=GIRA.TaldeK AND " +
-    	                    "GIRA.TaldeK=LEKUAN_JO.TaldeK AND GIRA.hasData=LEKUAN_JO.hasData AND"+
-    	            		"LEKUA.Herrialdea=LEKUAN_JO.Herrialdea AND LEKUA.Izena=LEKUAN_JO.Izena AND"+
-    	            		"LEKUA.Hiria=LEKUAN_JO.Hiria AND"+
-    	                    "LEKUA.Izena=?" +
+    	                    "GIRA.TaldeK=LEKUAN_JO.TaldeK AND GIRA.hasData=LEKUAN_JO.hasData AND "+
+    	            		"LEKUA.Herrialdea=LEKUAN_JO.Herrialdea AND LEKUA.Izena=LEKUAN_JO.Izena AND "+
+    	            		"LEKUA.Hiria=LEKUAN_JO.Hiria AND "+
+    	                    "LEKUA.Izena=? " +
     	            		"HAVING SUM(Prezioa*SaldutakoSarrerak)>1000");
     	        ps.setString(1,taldeIzen);
     	        ps.setString(2, leku);
@@ -1004,9 +996,9 @@ public class DB {
     			System.out.println("Sartu taldearen izena:");
 	            String taldeIzen = br.readLine();
 	            PreparedStatement ps = konexioa.prepareStatement(
-	            		"SELECT TALDE.IZENA, TALDE.KODEA, DISKO.IZENA DISKO.PREZIOA " + 
+	            		"SELECT TALDE.IZENA, TALDE.KODEA, DISKO.IZENA, DISKO.PREZIOA " + 
 	            		"FROM TALDE, DISKO " + 
-	            		"WHERE TALDE.izena = ? and TALDE.kode = DISKO.TALDEK AND ");
+	            		"WHERE TALDE.izena = ? and TALDE.kodea = DISKO.TALDEK ");
 	            ps.setString(1,taldeIzen);
 	            ResultSet rs = ps.executeQuery();
 	            System.out.println("Hauek dira " + taldeIzen + " taldeak dituen diskoak:");
@@ -1050,7 +1042,7 @@ public class DB {
 	            PreparedStatement ps = konexioa.prepareStatement(
 	            		"SELECT GIRA.hasData, LEKUA.Izena, LEKUA.Hiria, LEKUA.Herrialdea, LEKUAN_JO.Prezioa " + 
 	            		"FROM GIRA, TALDE, LEKUAN_JO, LEKUA " + 
-	            		"WHERE TALDE.izena = ? and TALDE.kode = GIRA.kode AND "+
+	            		"WHERE TALDE.izena = ? and TALDE.kodea = GIRA.taldek AND "+
 	            		"GIRA.HasData=LEKUAN_JO.HasData AND LEKUAN_JO.Hiria=LEKUA.Hiria AND LEKUAN_JO.Izena=LEKUA.Izena AND "+
 	            		"LEKUAN_JO.Herrialdea=LEKUA.Herrialdea");
 	            ps.setString(1,taldeIzen);
@@ -1092,7 +1084,7 @@ public class DB {
     	int saiakera=0;
     	do {
     		try {
-    			PreparedStatement ps = konexioa.prepareStatement("UPDATE Lekuan_Jo SET SaldutakoSarrerak = (SaldutakoSarrerak + ?)"+ 
+    			PreparedStatement ps = konexioa.prepareStatement("UPDATE Lekuan_Jo SET SaldutakoSarrerak = (SaldutakoSarrerak + ?) "+ 
     															" WHERE Hiria = ? AND izena = ? AND hasData= ?");
     	    	ps.setInt(1,kop);
     	    	ps.setString(2,hiria);
@@ -1114,8 +1106,8 @@ public class DB {
     	int saiakera=0;
     	do {
     		try {
-    			PreparedStatement ps = konexioa.prepareStatement("UPDATE DISKO SET SaldutakoKopiak = (SaldutakoKopiak + ?)"+ 
-    															" WHERE Disko.izen=? AND DISKO.taldek=?");
+    			PreparedStatement ps = konexioa.prepareStatement("UPDATE DISKO SET SaldutakoKopiak = (SaldutakoKopiak + ?) "+ 
+    															" WHERE Disko.izena=? AND DISKO.taldek=?");
     	    	ps.setInt(1,kop);
     	    	ps.setString(2,diskoIzen);
     	    	ps.setInt(3,taldek);
