@@ -17,7 +17,6 @@ public class DB {
     
     public static void main(String[] args) throws NumberFormatException, IOException, SQLException {
         DB db = new DB();
-        //db.menuErakutsi();
         db.menuPrintzipala();
     }
 
@@ -37,7 +36,6 @@ public class DB {
         catch(Exception e){
         	System.out.println("Errorea egon da datu basea kargatzean. Mesedez datu-datu basera konektatu eta saiatu berriro");
         	System.exit(0);
-            //e.printStackTrace();
         }
     }
 
@@ -607,18 +605,19 @@ public class DB {
 		}while(saiakera<3);
     }
 
-    private void sarrerakEguneratu(int kop, String hasData, String hiria, String izena) {
+    private void sarrerakEguneratu(int kop, String hasData, String herrialdea, String hiria, String izena) {
     	int saiakera=0;
     	do {
     		try {
     			PreparedStatement ps = konexioa.prepareStatement(
     					"UPDATE Lekuan_Jo SET SaldutakoSarrerak = (SaldutakoSarrerak + ?) "+ 
-    					"WHERE Hiria = ? AND izena = ? AND hasData= ?"
+    					"WHERE Herrialdea = ? AND Hiria = ? AND izena = ? AND hasData= ?"
     			);
     	    	ps.setInt(1,kop);
-    	    	ps.setString(2,hiria);
-    	    	ps.setString(3,izena);
-    	    	ps.setString(4, hasData);
+    	    	ps.setString(2, herrialdea);
+    	    	ps.setString(3,hiria);
+    	    	ps.setString(4,izena);
+    	    	ps.setString(5, hasData);
     	    	ps.executeUpdate();
     	    	System.out.println("Datu basea egoki eguneratu da");
     			saiakera=3;
@@ -723,7 +722,7 @@ public class DB {
     private boolean lekuaExisititzenDa(String pHerrialde, String pHiri, String pLeku) throws SQLException{
 		PreparedStatement ps = konexioa.prepareStatement(
     			"SELECT Herrialdea, Hiria, Izena " + 
-    			"FROM Lekua" +
+    			"FROM Lekua " +
     			"WHERE Herrialdea = ? AND Hiria = ? AND Izena = ?"
     	);
 		ps.setString(1,pHerrialde);
@@ -872,11 +871,21 @@ public class DB {
 	                    "WHERE TALDE.ProdKode IN " +
 	                            "(SELECT TALDE.ProdKode " +
 	                            "FROM TALDE " +
-	                            "WHERE TALDE.izena= ?)");
+	                            "WHERE TALDE.izena = ?) " +
+	                    "EXCEPT "+
+	                    "SELECT izena " +
+	                    "FROM TALDE " +
+	                    "WHERE izena = ?");
 	            ps.setString(1, taldeIzen);
+	            ps.setString(2, taldeIzen);
 	            ResultSet rs = ps.executeQuery();
-	            while(rs.next()){
-	                System.out.println(rs.getString(1));
+	            if(!rs.next()) System.out.println("Ez daude talderik sartu duzun taldearen produktore berarekin");
+	            else {
+		            System.out.println("Hauek dira " + taldeIzen + " taldeak bere produktorea konpartitzen duen taldeak:\n");
+	            	System.out.println(rs.getString(1));
+		            while(rs.next()){
+		                System.out.println(rs.getString(1));
+		            }
 	            }
 	            saiakera=3;
 		    }
@@ -1053,7 +1062,7 @@ public class DB {
     			System.out.println("Sartu taldearen izena:");
 	            String taldeIzen = br.readLine();
 	            PreparedStatement ps = konexioa.prepareStatement(
-	            		"SELECT TALDE.IZENA, TALDE.KODEA, DISKO.IZENA, DISKO.PREZIOA " + 
+	            		"SELECT TALDE.KODEA, DISKO.IZENA, DISKO.PREZIOA " + 
 	            		"FROM TALDE, DISKO " + 
 	            		"WHERE TALDE.izena = ? and TALDE.kodea = DISKO.TALDEK ");
 	            ps.setString(1,taldeIzen);
@@ -1062,7 +1071,7 @@ public class DB {
 	            int taldek=0;
 	            boolean daude=false;
 	            while(rs.next()){
-	                System.out.println(rs.getString(1)+" "+rs.getInt(2)+" "+rs.getString(3)+" "+rs.getFloat(4));
+	                System.out.println(rs.getString(3)+" "+rs.getFloat(4) + "€");
 	                taldek=rs.getInt(2);
 	                daude=true;
 	            }
@@ -1109,13 +1118,15 @@ public class DB {
 	            	System.out.println("Aukeratu horietako bat: ");
 	 	            System.out.println("Sartu hasiera data (UUUU-HH-EE formatuan): ");
 	 	            String hasData = konprobatuDataFormatua(br.readLine());
+	 	            System.out.println("Sart herrialdearen izena: ");
+	 	            String herrialdea = br.readLine();
 	 	            System.out.println("Sartu hiriaren izena: ");
 	 	            String hiria = br.readLine();
 	 	            System.out.println("Sartu lekuaren izena: ");
 	 	            String lekuIzen = br.readLine();
 	 	            System.out.println("Sartu erosi nahi dituzun sarrera kopurua: ");
 	 	            int kop = Integer.parseInt(br.readLine());
-	 	            sarrerakEguneratu(kop, hasData, hiria, lekuIzen);
+	 	            sarrerakEguneratu(kop, hasData, herrialdea,hiria, lekuIzen);
 	 	            System.out.println("Erosketa zuzen burtu da.");
 	            }else {System.out.println("Ez daude " + taldeIzen + " taldearen girak eskuragarri, bilatu beste talde batenak.");}
     			saiakera=3;
@@ -1160,6 +1171,7 @@ public class DB {
         		if(!Character.isDigit(karakterea)) bukatu = true;
         	}
         	else if(karakterea != '-') bukatu = true;
+        	i++;
     	}
     	if(bukatu) throw new DataFormatException();
     	else return pKonprobatzeko;
