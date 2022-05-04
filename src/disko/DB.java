@@ -1033,7 +1033,7 @@ public class DB {
 			PreparedStatement ps = konexioa.prepareStatement(
 					"SELECT Herrialdea, Hiria, Izena, AVG(Prezioa * SaldutakoSarrerak)" + 
 					"FROM LEKUAN_JO " +
-					"WHERE HasData like ‘2022%’ " +
+					"WHERE YEAR(HasData)=2022 " +
 					"GROUP BY Herrialdea, Hiria, Izena " +
 					"HAVING AVG(Prezioa * SaldutakoSarrerak) > 1000"
 			);
