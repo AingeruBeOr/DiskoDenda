@@ -585,7 +585,7 @@ public class DB {
 	            System.out.println("Sartu " + taldeIzen + " taldearen diskoaren izena:");
 	            String diskoIzen = br.readLine();
 	            PreparedStatement ps = konexioa.prepareStatement(
-	                    "SELECT  DISKO.Izena, ABESTIA.zenbakia, abestia.izena " +
+	                    "SELECT  DISKO.Izena, ABESTIA.* " +
 	                    "FROM TALDE, DISKO, ABESTIA " +
 	                    "WHERE TALDE.kodea = DISKO.TaldeK AND " +
 	                            "DISKO.Kodea = ABESTIA.DiskoK AND " +
