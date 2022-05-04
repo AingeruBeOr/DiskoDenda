@@ -58,7 +58,7 @@ public class DB {
 
     
 
-    private void menuErakutsi() throws IOException,SQLException{
+    private void menuErakutsi(){
     	int aukera = -1;
         try {
         	while(aukera!=20){
@@ -97,13 +97,13 @@ public class DB {
                 aukeraIrakurri(aukera);
             }
             konexioa.close();
-        }catch(NumberFormatException e) {
-        	System.out.println("Zenbakia ez den zeozer sartu duzu.");
+        }catch(Exception e) {
+        	salbuespenaTratatu(e);
         }
         menuErakutsi();
     }
 
-    private void aukeraIrakurri(int aukera) throws IOException{
+    private void aukeraIrakurri(int aukera){
     	//if((aukera==5 && aukera==9 && aukera==10 && aukera==11 && aukera==12 && aukera==13 && aukera==16 && aukera==17) || !pasahitzaZuzenaDa()) aukera=100;
         switch (aukera){
         	case 0:
@@ -177,25 +177,8 @@ public class DB {
                 break;
         }
     }
-    /*	int saiakera=0;
-    	do {
-    		try {
-    		
-    			saiakera=3;
-    		}catch(NumberFormatException e) {
-        		System.out.println("Zenbakia ez den zeozer sartu duzu, saiatu berriro: ");   		
-        	}catch(SQLException e) {
-        		System.out.println("ERRORE BAT SUERTATU DA DATU BASEAREKIN");
-        		System.out.println(e.getMessage());
-        		System.out.println(e.getErrorCode());
-        		if (e.getErrorCode()==1062) System.out.println("Kode hori duen produktorea existitzen da.");
-        	}
-    		saiakera++;
-    	}while(saiakera<3);
-     * 
-     */
     
-    private void produktoreBerriaSartu() throws IOException{
+    private void produktoreBerriaSartu() {
     	int saiakera=0;
     	do {
     		try {
@@ -225,7 +208,7 @@ public class DB {
      * @throws IOException
      * @throws NumberFormatException
      */
-    private void taldeakSartu() throws IOException{
+    private void taldeakSartu() {
     	int saiakera=0;
     	do{
 			try {
@@ -269,7 +252,7 @@ public class DB {
 		}while(saiakera<3);
     }
 
-    private void diskoBerriaSartu() throws IOException{
+    private void diskoBerriaSartu() {
     	int saiakera=0;
     	do {
     		try {
@@ -317,7 +300,7 @@ public class DB {
      * @throws SQLException 
      * @throws IOException
      */
-    private void giraBerriakSartu() throws IOException{
+    private void giraBerriakSartu() {
     	int saiakera=0;
     	do {
     		try {
@@ -345,33 +328,29 @@ public class DB {
     }
     
     private void sortuBerriDenGirarenLekuakSartu(String hData, int tKode) throws IOException{
-		String herrialde="";
-		String hiriIzen="";
-		String hizki, lekua="";
-		Float prezioa;
-		PreparedStatement ps, ps2=konexioa.prepareStatement("INSERT INTO LEKUA VALUES(?, ?, ?)");
-		int errore=0;
 		int saiakera=0;
 	    do{
 	    	try{
+	    		String hizki;
 	    		do {
 	    			System.out.println("Sartu herrialdearen izena: ");
-	    		    herrialde= br.readLine();
+	    		    String herrialde= br.readLine();
 	    		    System.out.println("Sartu hiriaren izena: ");
-	    		    hiriIzen= br.readLine();
+	    		    String hiriIzen= br.readLine();
 	    		    System.out.println("Sartu lekuaren izena: ");
-    	        	lekua= br.readLine();
+    	        	String lekua= br.readLine();
     	    		System.out.println("Sartu sarreren prezioa: ");
-    	        	prezioa= Float.valueOf(br.readLine());
-	    		    ps2 = konexioa.prepareStatement("INSERT INTO LEKUAN_JO VALUES(?, ?, ?, ?, ?, ?, 0)");
-	    			ps = konexioa.prepareStatement("INSERT INTO LEKUA VALUES(?, ?, ?)");
-	    			//Hiria sortzeko:
-	    			ps.setString(1,lekua);
-	    			ps.setString(2,hiriIzen);
-	    	    	ps.setString(3,herrialde);
-	    	    	ps.executeUpdate();
-	    	    	errore++;
-	    	    	
+    	        	Float prezioa= Float.valueOf(br.readLine());
+    	        	if(!lekuaExisititzenDa(herrialde, hiriIzen, lekua)) {
+    	        		PreparedStatement ps = konexioa.prepareStatement("INSERT INTO LEKUA VALUES(?, ?, ?)");
+    	        		//Hiria sortzeko:
+    	    			ps.setString(1,lekua);
+    	    			ps.setString(2,hiriIzen);
+    	    	    	ps.setString(3,herrialde);
+    	    	    	ps.executeUpdate();
+    	        	}
+	    		    PreparedStatement ps2 = konexioa.prepareStatement("INSERT INTO LEKUAN_JO VALUES(?, ?, ?, ?, ?, ?, 0)");
+//	    	    	errore++;
 	    	    	//Hiria eta gira konektatzeko:
 	    	    	ps2.setString(1,lekua);
 	    	    	ps2.setString(2,hiriIzen);
@@ -380,31 +359,12 @@ public class DB {
 	    	    	ps2.setInt(5, tKode);
 	    	    	ps2.setFloat(6, prezioa);
 	    	    	ps2.executeUpdate();
-	    	    	//Hirian lekuak gehitzeko:
 	    	    	System.out.println("Leku gehiagorik sartu nahi duzu? (B/E)");
 	    			hizki=br.readLine();
 	    		}while(hizki.equalsIgnoreCase("B"));
 	    		saiakera=3;
-	    		
-		    }catch(NumberFormatException e) {
-				System.out.println("Zenbakia ez den zeozer sartu duzu, saiatu berriro: ");  		
-			}catch(SQLException e) {
-				System.out.println("ERRORE BAT SUERTATU DA DATU BASEAREKIN");
-				System.out.println(e.getMessage());
-				System.out.println(e.getErrorCode());
-				if (e.getErrorCode()==1062 && errore==0) {
-					System.out.println("Lekua jada existitzen da datu basean, baina girari gehituko zaio.");
-					ps2.setString(1,herrialde);
-	    	    	ps2.setString(2,hiriIzen);
-	    	    	ps2.setString(3,lekua);
-	    	    	ps2.setString(4, hData);
-	    	    	ps2.setInt(5, tKode);
-	    	    	ps2.executeUpdate();
-	    	    	System.out.println("Leku gehiagorik sartu nahi duzu? (B/E)");
-	    			hizki=br.readLine();
-	    			if(hizki.equalsIgnoreCase("B")) sortuBerriDenGirarenLekuakSartu(hData, tKode);
-	    			else saiakera=3;
-				}
+		    }catch(Exception e) {
+		    	salbuespenaTratatu(e);
 			}
 			saiakera++;
 		}while(saiakera<3);
@@ -418,40 +378,34 @@ public class DB {
      * @throws NumberFormatException
      */
     private void girarenLekuakSartu() {
-		String herrialde="";
-		String hiriIzen="";
-		String lekua="";
-		String hizki, hasData="";
-		Float prezioa=(float)0;
-		int taldeK=0;
 		int saiakera=0;
-		PreparedStatement ps2=konexioa.prepareStatement("INSERT INTO LEKUA VALUES(?, ?, ?)");
-		
 	    do{
 	    	try{
 	    		System.out.println("Sartu jotzen duen taldearen kodea: ");
-	        	taldeK = Integer.parseInt(br.readLine());
+	        	int taldeK = Integer.parseInt(br.readLine());
 	        	System.out.println("Sartu gira berriaren hasiera data (UUUU-HH-EE formatuan): ");
-	        	hasData = konprobatuDataFormatua(br.readLine());
+	        	String hasData = konprobatuDataFormatua(br.readLine());
+	        	String hizki;
 	        	do {
 	    			System.out.println("Sartu herrialdearen izena: ");
-	    		    herrialde= br.readLine();
+	    		    String herrialde= br.readLine();
 	    		    System.out.println("Sartu hiriaren izena: ");
-	    		    hiriIzen= br.readLine();
+	    		    String hiriIzen= br.readLine();
 	    		    System.out.println("Sartu lekuaren izena: ");
-    	        	lekua= br.readLine();
+    	        	String lekua= br.readLine();
     	    		System.out.println("Sartu sarreren prezioa: ");
-    	        	prezioa= Float.valueOf(br.readLine());
-    	        	ps2 = konexioa.prepareStatement("INSERT INTO LEKUAN_JO VALUES(?, ?, ?, ?, ?, ?, 0)");
- 	    			PreparedStatement ps = konexioa.prepareStatement("INSERT INTO LEKUA VALUES(?, ?, ?)");
-	    			//Hiria sortzeko:
-	    			ps.setString(1,lekua);
-	    			ps.setString(2,hiriIzen);
-	    	    	ps.setString(3,herrialde);
-	    	    	//ps.setFloat(4, prezioa);
-	    	    	ps.executeUpdate();
-	    	    	
-	    	    	//Hiria eta gira konektatzeko:
+    	        	Float prezioa= Float.valueOf(br.readLine());
+    	        	if(!lekuaExisititzenDa(herrialde, hiriIzen, lekua)) {
+    	        		PreparedStatement ps = konexioa.prepareStatement("INSERT INTO LEKUA VALUES(?, ?, ?)");
+    	        		//Hiria sortzeko:
+    	    			ps.setString(1,lekua);
+    	    			ps.setString(2,hiriIzen);
+    	    	    	ps.setString(3,herrialde);
+    	    	    	//ps.setFloat(4, prezioa);
+    	    	    	ps.executeUpdate();
+    	        	}
+    	        	//Hiria eta gira konektatzeko:
+    	        	PreparedStatement ps2 = konexioa.prepareStatement("INSERT INTO LEKUAN_JO VALUES(?, ?, ?, ?, ?, ?, 0)");
 	    	    	ps2.setString(1,lekua);
 	    	    	ps2.setString(2,hiriIzen);
 	    	    	ps2.setString(3,herrialde);
@@ -459,30 +413,29 @@ public class DB {
 	    	    	ps2.setInt(5, taldeK);
 	    	    	ps2.setFloat(6, prezioa);
 	    	    	ps2.executeUpdate();
-	    	    	//Hirian lekuak gehitzeko:
 	    	    	System.out.println("Leku gehiagorik sartu nahi duzu? (B/E)");
 	    			hizki=br.readLine();
 	    		}while(hizki.equalsIgnoreCase("B"));
 	    		saiakera=3;
-	    		
-		    }catch(NumberFormatException e) {
-				System.out.println("Zenbakia ez den zeozer sartu duzu, saiatu berriro: ");  		
-			}catch(SQLException e) {
-				//System.out.println("Lekua jada existitzen da datu basean, baina girari gehituko zaio.");
-				ps2.setString(1,lekua);
-    	    	ps2.setString(2,hiriIzen);
-    	    	ps2.setString(3,herrialde);
-    	    	ps2.setString(4, hasData);
-    	    	ps2.setInt(5, taldeK);
-    	    	ps2.setFloat(6, prezioa);
-    	    	ps2.executeUpdate();
-    	    	System.out.println("Leku gehiagorik sartu nahi duzu? (B/E)");
-    			hizki=br.readLine();
-    			if(hizki.equalsIgnoreCase("B")) sortuBerriDenGirarenLekuakSartu(hasData, taldeK);
-    			else saiakera=3;
+		    }catch(Exception e) {
+		    	salbuespenaTratatu(e);
 			}
 			saiakera++;
 		}while(saiakera<3);
+    }
+    
+    private boolean lekuaExisititzenDa(String pHerrialde, String pHiri, String pLeku) throws SQLException{
+		PreparedStatement ps = konexioa.prepareStatement(
+    			"SELECT Herrialdea, Hiria, Izena " + 
+    			"FROM Lekua" +
+    			"WHERE Herrialdea = ? AND Hiria = ? AND Izena = ?"
+    	);
+		ps.setString(1,pHerrialde);
+		ps.setString(2,pHiri);
+		ps.setString(3,pLeku);
+		ResultSet rs = ps.executeQuery();
+		if(rs.next()) return true;
+		else return false;
     }
     
     /**
