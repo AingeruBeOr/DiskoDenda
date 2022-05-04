@@ -17,7 +17,8 @@ public class DB {
     
     public static void main(String[] args) throws NumberFormatException, IOException, SQLException {
         DB db = new DB();
-        db.menuErakutsi();
+        //db.menuErakutsi();
+        db.menuPrintzipala();
     }
 
     private DB(){
@@ -39,24 +40,112 @@ public class DB {
             //e.printStackTrace();
         }
     }
-    
-    private boolean pasahitzaZuzenaDa() throws IOException{
-    	int saiakera=0;
-    	do {
-    		try {
-    			System.out.println("Pasahitza sartu: ");
-            	int p= Integer.parseInt(br.readLine());
-            	if (p==pasahitza) return true;
-            	else System.out.println("Pasahitza okerra da.");
-    		}catch(NumberFormatException e) {
-    			System.out.println("Pasahitza zenbaki bat izan behar du.");
-    		}
-    		saiakera++;
-    	}while(saiakera<3);
-    	return false;
-    }
 
+    private void menuPrintzipala() {
+    	int aukera=-1;
+    	try {
+        	while(aukera!=0){
+                System.out.println("  __  __ ______ _   _ _    _         \r\n"
+                		+ " |  \\/  |  ____| \\ | | |  | |  /\\    \r\n"
+                		+ " | \\  / | |__  |  \\| | |  | | /  \\   \r\n"
+                		+ " | |\\/| |  __| | . ` | |  | |/ /\\ \\  \r\n"
+                		+ " | |  | | |____| |\\  | |__| / ____ \\ \r\n"
+                		+ " |_|  |_|______|_| \\_|\\____/_/    \\_\\\r\n"
+                		+ "                                     \r\n"
+                		+ "                                    ");
+                System.out.println("1.- Datuak sartu.");
+                System.out.println("2.- Datuak aldatu edo ezabatu.");
+                System.out.println("3.- Kontsultak egin.");
+                System.out.println("0.- Irten.");
+                System.out.println("\n\nAukera bat sartu: ");
+                aukera = Integer.parseInt(br.readLine());
+                if(aukera==1 || aukera==2) {
+                	System.out.println("Pasahitza sartu behar duzu datuak kudeatzeko: ");
+                	boolean ondo=this.pasahitzaZuzenaDa();
+                	if(ondo && aukera==1) datuakSartzekoMenua();
+                	else if(ondo && aukera==2) datuakAldatzekoMenua();
+                }else if(aukera==3) kontsultenMenua();
+            }
+
+            konexioa.close();
+        }catch(Exception e) {
+        	salbuespenaTratatu(e);
+        }
+        menuPrintzipala();
+    }
     
+    private void datuakSartzekoMenua() {
+    	int aukera = -1;
+        try {
+           
+            System.out.println("1.- Produktore berria sartu.");
+            System.out.println("2.- Talde berriak sartu.");
+            System.out.println("3.- Disko berria sartu.");
+            System.out.println("4.- Gira berriak sartu.");
+            System.out.println("5.- Gira baten barruan hiri berriak sartu.");
+            System.out.println("\n\nAukera bat sartu: ");
+            aukera = Integer.parseInt(br.readLine());
+            aukeraIrakurri2(aukera, 1, true);
+
+        }catch(Exception e) {
+        	salbuespenaTratatu(e);
+        }
+    }
+    private void datuakAldatzekoMenua() {
+    	int aukera = -1;
+        try {
+            
+            System.out.println("1.- Giraren bukera eta hasiera datak aldatu.");
+            System.out.println("2.- Talde bat kaleratu.");
+            System.out.println("3.- Girako hiriak kendu.");
+            System.out.println("\n\nAukera bat sartu: ");
+            aukera = Integer.parseInt(br.readLine());
+            aukeraIrakurri2(aukera,2,true);
+        }catch(Exception e) {
+        	salbuespenaTratatu(e);
+        }
+    }
+    private void kontsultenMenua() {
+    	int aukera = -1;
+    	boolean ondo=false;
+        try {
+            System.out.println("1.- Talde baten gira guztiak lortu.");
+            System.out.println("2.- Talde baten gira bateko hiri guztiak sarreraren prezioarekin.");
+            System.out.println("3.- Talde baten disko baten abesti guztiak.");
+            System.out.println("4.- Talde baten disko guztien prezioak.");
+            System.out.println("5.- Talde bat adierazi, produktore bera erabiltzen duten taldeak lortu.");
+            System.out.println("6.- Abestiak zenbakiaren arabera ordenatu.");
+            System.out.println("7.- Hiriak izenaren arabera ordenatu.");
+            System.out.println("8.- Sarrera erosi:");
+            System.out.println("9.- Diskoa erosi:");
+            System.out.println("\n\nAukera gehiago ikusteko pasahitza sartu nahi duzu? (B/E)");
+            String erabaki=br.readLine();
+            if(erabaki.equalsIgnoreCase("b")) {
+            	ondo=this.pasahitzaZuzenaDa();
+            	System.out.println("1.- Talde baten gira guztiak lortu.");
+        		System.out.println("2.- Talde baten gira bateko hiri guztiak sarreraren prezioarekin.");
+                System.out.println("3.- Talde baten disko baten abesti guztiak.");
+                System.out.println("4.- Talde baten disko guztien prezioak.");
+                System.out.println("5.- Talde bat adierazi, produktore bera erabiltzen duten taldeak lortu.");
+                System.out.println("6.- Abestiak zenbakiaren arabera ordenatu.");
+                System.out.println("7.- Hiriak izenaren arabera ordenatu.");
+                System.out.println("8.- Sarrera erosi:");
+                System.out.println("9.- Diskoa erosi:");
+            	if(ondo) {
+            		System.out.println("10.- Kalkulatu gira baten irabaziak.");
+                    System.out.println("11.- Kalkulatu diskoaren irabaziak.");
+                    System.out.println("12.- Talde batek hiri batean lortutako irabaziak.");
+                    System.out.println("13.- 1000€ baino gehiago irabazi duten taldeak erakutsi.");
+            	}
+            }
+            System.out.println("\n\nAukera bat sartu: ");
+            aukera = Integer.parseInt(br.readLine());
+            aukeraIrakurri2(aukera,3,ondo);
+   
+        }catch(Exception e) {
+        	salbuespenaTratatu(e);
+        }
+    }
 
     private void menuErakutsi(){
     	int aukera = -1;
@@ -105,7 +194,6 @@ public class DB {
     }
 
     private void aukeraIrakurri(int aukera){
-    	//if((aukera==5 && aukera==9 && aukera==10 && aukera==11 && aukera==12 && aukera==13 && aukera==16 && aukera==17) || !pasahitzaZuzenaDa()) aukera=100;
         switch (aukera){
         	case 0:
         		produktoreBerriaSartu();
@@ -178,7 +266,94 @@ public class DB {
                 break;
         }
     }
+    private void aukeraIrakurri2(int aukera, int menu, boolean ondo){
+    	if(menu==1) {
+    		switch (aukera){
+        	case 1:
+        		produktoreBerriaSartu();
+        		break;
+            case 2:
+                taldeakSartu();
+                break;
+            case 3:
+                diskoBerriaSartu();
+                break;
+            case 4:
+                giraBerriakSartu();
+                break;
+            case 5:
+                girarenLekuakSartu(null,0);
+                break;
+            default:
+                System.out.println("Sartu aukera egoki bat");
+                break;
+    		}
+    	}else if(menu==2) {
+    		switch (aukera){
+	    	case 1:
+	            girarenBukHasDatakAldatu();
+	            break;
+	        case 2:
+	            taldeaKaleratu();
+	            break;
+	        case 3:
+	            lekuakGiratikKendu();
+	            break;
+	        default:
+	        	System.out.println("Sartu aukera egoki bat");
+	            break;
+    		}
+    	}else {
+    		switch(aukera) {
+    		case 1:
+                taldearenGirakErakutsi();
+                break;
+            case 2:
+                girarenLekuakErakutsi();
+                break;
+            case 3:
+                diskoarenAbestiakErakutsi();
+                break;
+            case 4:
+                diskoenPrezioakErakutsi();
+                break;
+            case 5:
+                taldeProduktoreBera();
+                break;
+            case 6:
+            	diskoaAbestiazOrdenatuaErakutsi();
+                break;
+            case 7:
+            	giraLekuezOrdenatutaErakutsi();
+                break;
+            case 8:
+            	sarreraErosketaEgin();
+                break;
+            case 9:
+            	diskoErosketaEgin();
+                break;
+            case 10:
+            	if (ondo)giraIrabaziak();
+                break;
+            case 11:
+                if(ondo)diskoIrabaziak();
+                break;
+            case 12:
+            	if(ondo)lekuBakoitzekoBatezbestekoIrabaziak();
+            	break;
+            case 13:
+            	if(ondo)euro1000BainoGehiago2022Lekuak();
+            	break;
+            default:
+                System.out.println("Sartu aukera egoki bat");
+                break;
+        }
+    	}
+        
+    }
     
+    
+    //************************************************INSERT************************************************************
     private void produktoreBerriaSartu() {
     	int saiakera=0;
     	do {
@@ -385,20 +560,9 @@ public class DB {
 		}while(saiakera<3);
     }
     
-    private boolean lekuaExisititzenDa(String pHerrialde, String pHiri, String pLeku) throws SQLException{
-		PreparedStatement ps = konexioa.prepareStatement(
-    			"SELECT Herrialdea, Hiria, Izena " + 
-    			"FROM Lekua" +
-    			"WHERE Herrialdea = ? AND Hiria = ? AND Izena = ?"
-    	);
-		ps.setString(1,pHerrialde);
-		ps.setString(2,pHiri);
-		ps.setString(3,pLeku);
-		ResultSet rs = ps.executeQuery();
-		if(rs.next()) return true;
-		else return false;
-    }
     
+    
+  //************************************************UPDATE************************************************************
     /**
      * Gira bateko datetan arazoak egonda hauek aldatuko dira:
      * @throws IOException
@@ -443,6 +607,52 @@ public class DB {
 		}while(saiakera<3);
     }
 
+    private void sarrerakEguneratu(int kop, String hasData, String hiria, String izena) {
+    	int saiakera=0;
+    	do {
+    		try {
+    			PreparedStatement ps = konexioa.prepareStatement(
+    					"UPDATE Lekuan_Jo SET SaldutakoSarrerak = (SaldutakoSarrerak + ?) "+ 
+    					"WHERE Hiria = ? AND izena = ? AND hasData= ?"
+    			);
+    	    	ps.setInt(1,kop);
+    	    	ps.setString(2,hiria);
+    	    	ps.setString(3,izena);
+    	    	ps.setString(4, hasData);
+    	    	ps.executeUpdate();
+    	    	System.out.println("Datu basea egoki eguneratu da");
+    			saiakera=3;
+        	}
+    		catch(Exception e) {
+    			salbuespenaTratatu(e);
+    		}
+    		saiakera++;
+    	}while(saiakera<3);
+    }
+    
+    private void diskoakEguneratu(int kop, String diskoIzen, int taldek) {
+    	int saiakera=0;
+    	do {
+    		try {
+    			PreparedStatement ps = konexioa.prepareStatement(
+    					"UPDATE DISKO SET SaldutakoKopiak = (SaldutakoKopiak + ?) "+ 
+    					"WHERE Disko.izena=? AND DISKO.taldek=?"
+    			);
+    	    	ps.setInt(1,kop);
+    	    	ps.setString(2,diskoIzen);
+    	    	ps.setInt(3,taldek);
+    	    	ps.executeUpdate();
+    	    	System.out.println("Datu basea egoki eguneratu da");
+    			saiakera=3;
+        	}
+    		catch(Exception e) {
+    			salbuespenaTratatu(e);
+    		}
+    		saiakera++;
+    	}while(saiakera<3);
+    }
+    
+  //************************************************DELETE************************************************************
     /**
      * Talde baten kodea sartuta, talde hori datu basetik aterako da. Dependentzia guztiak "ON DELETE CASCADE" jarrita daudenez, hauek ere ezabatuko dira.
      * @throws IOException
@@ -509,6 +719,21 @@ public class DB {
 		}while(saiakera<3);
     }
 
+  //************************************************SELECT************************************************************
+    private boolean lekuaExisititzenDa(String pHerrialde, String pHiri, String pLeku) throws SQLException{
+		PreparedStatement ps = konexioa.prepareStatement(
+    			"SELECT Herrialdea, Hiria, Izena " + 
+    			"FROM Lekua" +
+    			"WHERE Herrialdea = ? AND Hiria = ? AND Izena = ?"
+    	);
+		ps.setString(1,pHerrialde);
+		ps.setString(2,pHiri);
+		ps.setString(3,pLeku);
+		ResultSet rs = ps.executeQuery();
+		if(rs.next()) return true;
+		else return false;
+    }
+    
     private void taldearenGirakErakutsi(){
     	int saiakera=0;
     	do {
@@ -518,7 +743,8 @@ public class DB {
 	            PreparedStatement ps = konexioa.prepareStatement(
 	            		"SELECT GIRA.hasData, LEKUAN_JO.HERRIALDEA, LEKUAN_JO.HIRIA, LEKUAN_JO.IZENA " + 
 	            		"FROM GIRA, TALDE, LEKUAN_JO " + 
-	            		"WHERE TALDE.izena = ? and TALDE.kodea = GIRA.taldek and Gira.hasdata=lekuan_jo.hasdata and gira.taldek=lekuan_jo.taldek");
+	            		"WHERE TALDE.izena = ? and TALDE.kodea = GIRA.taldek and "+
+	            		"Gira.hasdata=lekuan_jo.hasdata and gira.taldek=lekuan_jo.taldek");
 	            ps.setString(1,taldeIzen);
 	            ResultSet rs = ps.executeQuery();
 	            while(rs.next()){
@@ -549,10 +775,9 @@ public class DB {
 	    		String data = konprobatuDataFormatua(br.readLine());
 	            PreparedStatement ps = konexioa.prepareStatement(
 	                    "SELECT LEKUAN_JO.Hiria, LEKUAN_JO.Herrialdea, LEKUAN_JO.Izena, LEKUAN_JO.Prezioa " +
-	                    "FROM TALDE, GIRA, LEKUAN_JO " +
-	                    "WHERE TALDE.kodea = GIRA.TaldeK AND " +
-	                    		"GIRA.TaldeK=LEKUAN_JO.TaldeK AND GIRA.hasData=LEKUAN_JO.hasData AND "+
-	                            "GIRA.hasData = ? AND " +
+	                    "FROM TALDE, LEKUAN_JO " +
+	                    "WHERE TALDE.kodea =LEKUAN_JO.TaldeK AND "+
+	                            "LEKUAN_JO.hasData = ? AND " +
 	                            "TALDE.Izena = ?");
 	            ps.setString(1,data);
 	            ps.setString(2,taldeIzen);
@@ -681,9 +906,7 @@ public class DB {
 	                    "SELECT SUM(LEKUAN_JO.SaldutakoSarrerak * LEKUAN_JO.Prezioa) " +
 	                    "FROM TALDE, GIRA, LEKUAN_JO " +
 	                    "WHERE TALDE.izena = ? and " +
-	                    	"GIRA.TaldeK = TALDE.Kodea and " +
-	                        "GIRA.TaldeK = LEKUAN_JO.TaldeK and " +
-	                        "GIRA.HasData = LEKUAN_JO.HasData and " +
+	                    	"TALDE.Kodea = LEKUAN_JO.TaldeK and " +
 	                        "LEKUAN_JO.HasData = ? ");
 	            ps.setString(1,taldeIzen);
 	            ps.setString(2,giraData);
@@ -734,7 +957,7 @@ public class DB {
     	    			"SELECT  DISKO.Kodea, DISKO.Izena, ABESTIA.* " + 
     	    			"FROM TALDE, DISKO, ABESTIA " + 
     	    			"WHERE TALDE.kodea = DISKO.TaldeK AND " + 
-    	    			"DISKO.Kodea=ABESTIA.DiskoK AND DISKO.Izena = ? AND TALDE.Izena= ?  " + 
+    	    			"DISKO.Kodea=ABESTIA.DiskoK AND DISKO.Izena=?  AND TALDE.Izena= ?  " + 
     	    			"ORDER BY ABESTIA.Zenbakia ");
     	    	ps.setString(1,diskoIzena);
     	        ps.setString(2,taldeIzena);
@@ -761,15 +984,12 @@ public class DB {
 	            System.out.println("Sartu zein den "+taldeIzen+" taldetik ikusi nahi duzun giraren hasiera data (UUUU-HH-EE formatuan): ");
 	    		String data = konprobatuDataFormatua(br.readLine());
 	            PreparedStatement ps = konexioa.prepareStatement(
-	                    "SELECT  LEKUA.Izena, LEKUA.HIRIA, LEKUA.HERRIALDEA " +
-	                    "FROM LEKUA, TALDE, GIRA, LEKUAN_JO " +
-	                    "WHERE TALDE.kodea = GIRA.TaldeK AND " +
-	                    		"GIRA.TaldeK=LEKUAN_JO.TaldeK AND GIRA.hasData=LEKUAN_JO.hasData AND "+
-	                    		"LEKUA.Herrialdea=LEKUAN_JO.Herrialdea AND LEKUA.Izena=LEKUAN_JO.Izena AND "+
-	                    		"LEKUA.Hiria=LEKUAN_JO.Hiria AND "+
-	                            "GIRA.hasData = ? AND " +
+	                    "SELECT  LEKUAN_JO.Izena, LEKUAN_JO.HIRIA, LEKUAN_JO.HERRIALDEA " +
+	                    "FROM  TALDE,  LEKUAN_JO " +
+	                    "WHERE TALDE.kodea=LEKUAN_JO.TaldeK AND "+
+	                            "LEKUAN_JO.hasData = ? AND " +
 	                            "TALDE.Izena = ?"+
-	                    "ORDER BY LEKUA.Izena");
+	                    "ORDER BY LEKUAN_JO.Izena");
 	            ps.setString(1,data);
 	            ps.setString(2,taldeIzen);
 	            ResultSet rs = ps.executeQuery();
@@ -873,11 +1093,9 @@ public class DB {
     			System.out.println("Sartu taldearen izena:");
 	            String taldeIzen = br.readLine();
 	            PreparedStatement ps = konexioa.prepareStatement(
-	            		"SELECT GIRA.hasData, LEKUA.herrialdea, LEKUA.Hiria, LEKUA.Izena, LEKUAN_JO.Prezioa " + 
-	            		"FROM GIRA, TALDE, LEKUAN_JO, LEKUA " + 
-	            		"WHERE TALDE.izena = ? and TALDE.kodea = GIRA.taldek AND "+
-	            			"GIRA.HasData = LEKUAN_JO.HasData AND LEKUAN_JO.Hiria = LEKUA.Hiria AND LEKUAN_JO.Izena = LEKUA.Izena AND "+
-	            			"LEKUAN_JO.Herrialdea=LEKUA.Herrialdea"
+	            		"SELECT LEKUAN_JO.hasData, LEKUAN_JO.herrialdea, LEKUAN_JO.Hiria, LEKUAN_JO.Izena, LEKUAN_JO.Prezioa " + 
+	            		"FROM  TALDE, LEKUAN_JO" + 
+	            		"WHERE TALDE.izena = ? and TALDE.kodea = LEKUAN_JO.taldek "
 	            );
 	            ps.setString(1,taldeIzen);
 	            ResultSet rs = ps.executeQuery();
@@ -909,51 +1127,23 @@ public class DB {
     	}while(saiakera<3);
     }
     
-    private void sarrerakEguneratu(int kop, String hasData, String hiria, String izena) {
-    	int saiakera=0;
-    	do {
-    		try {
-    			PreparedStatement ps = konexioa.prepareStatement(
-    					"UPDATE Lekuan_Jo SET SaldutakoSarrerak = (SaldutakoSarrerak + ?) "+ 
-    					"WHERE Hiria = ? AND izena = ? AND hasData= ?"
-    			);
-    	    	ps.setInt(1,kop);
-    	    	ps.setString(2,hiria);
-    	    	ps.setString(3,izena);
-    	    	ps.setString(4, hasData);
-    	    	ps.executeUpdate();
-    	    	System.out.println("Datu basea egoki eguneratu da");
-    			saiakera=3;
-        	}
-    		catch(Exception e) {
-    			salbuespenaTratatu(e);
-    		}
-    		saiakera++;
-    	}while(saiakera<3);
-    }
+  //************************************************KONPROBAKETAK************************************************************
     
-    private void diskoakEguneratu(int kop, String diskoIzen, int taldek) {
+    private boolean pasahitzaZuzenaDa() throws IOException{
     	int saiakera=0;
     	do {
     		try {
-    			PreparedStatement ps = konexioa.prepareStatement(
-    					"UPDATE DISKO SET SaldutakoKopiak = (SaldutakoKopiak + ?) "+ 
-    					"WHERE Disko.izena=? AND DISKO.taldek=?"
-    			);
-    	    	ps.setInt(1,kop);
-    	    	ps.setString(2,diskoIzen);
-    	    	ps.setInt(3,taldek);
-    	    	ps.executeUpdate();
-    	    	System.out.println("Datu basea egoki eguneratu da");
-    			saiakera=3;
-        	}
-    		catch(Exception e) {
-    			salbuespenaTratatu(e);
+    			System.out.println("Pasahitza sartu: ");
+            	int p= Integer.parseInt(br.readLine());
+            	if (p==pasahitza) return true;
+            	else System.out.println("Pasahitza okerra da.");
+    		}catch(NumberFormatException e) {
+    			System.out.println("Pasahitza zenbaki bat izan behar du.");
     		}
     		saiakera++;
     	}while(saiakera<3);
+    	return false;
     }
-   
     
     /**
      * String bat UUUU-HH-EE formatuan idatzita dagoen konprobatzen du.
