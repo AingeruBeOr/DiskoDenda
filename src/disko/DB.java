@@ -115,9 +115,9 @@ public class DB {
             System.out.println("4.- Talde baten disko guztien prezioak.");
             System.out.println("5.- Talde bat adierazi, produktore bera erabiltzen duten taldeak lortu.");
             System.out.println("6.- Abestiak zenbakiaren arabera ordenatu.");
-            System.out.println("7.- Hiriak izenaren arabera ordenatu.");
-            System.out.println("8.- Sarrera erosi:");
-            System.out.println("9.- Diskoa erosi:");
+//            System.out.println("7.- Hiriak izenaren arabera ordenatu.");
+            System.out.println("7.- Sarrera erosi:");
+            System.out.println("8.- Diskoa erosi:");
             System.out.println("\n\nAukera gehiago ikusteko pasahitza sartu nahi duzu? (B/E)");
             String erabaki=br.readLine();
             if(erabaki.equalsIgnoreCase("b")) {
@@ -128,14 +128,14 @@ public class DB {
                 System.out.println("4.- Talde baten disko guztien prezioak.");
                 System.out.println("5.- Talde bat adierazi, produktore bera erabiltzen duten taldeak lortu.");
                 System.out.println("6.- Abestiak zenbakiaren arabera ordenatu.");
-                System.out.println("7.- Hiriak izenaren arabera ordenatu.");
-                System.out.println("8.- Sarrera erosi:");
-                System.out.println("9.- Diskoa erosi:");
+//                System.out.println("7.- Hiriak izenaren arabera ordenatu.");
+                System.out.println("7.- Sarrera erosi:");
+                System.out.println("8.- Diskoa erosi:");
             	if(ondo) {
-            		System.out.println("10.- Kalkulatu gira baten irabaziak.");
-                    System.out.println("11.- Kalkulatu diskoaren irabaziak.");
-                    System.out.println("12.- Talde batek hiri batean lortutako irabaziak.");
-                    System.out.println("13.- 1000€ baino gehiago irabazi duten taldeak erakutsi.");
+            		System.out.println("9.- Kalkulatu gira baten irabaziak.");
+                    System.out.println("10.- Kalkulatu diskoaren irabaziak.");
+                    System.out.println("11.- Talde batek hiri batean lortutako irabaziak.");
+                    System.out.println("12.- 1000€ baino gehiago irabazi duten taldeak erakutsi.");
             	}
             }
             System.out.println("\n\nAukera bat sartu: ");
@@ -147,7 +147,7 @@ public class DB {
         }
     }
 
-    private void menuErakutsi(){
+    /*private void menuErakutsi(){
     	int aukera = -1;
         try {
         	while(aukera!=21){
@@ -265,7 +265,7 @@ public class DB {
                 System.out.println("Sartu aukera egoki bat");
                 break;
         }
-    }
+    }*/
     private void aukeraIrakurri2(int aukera, int menu, boolean ondo){
     	if(menu==1) {
     		switch (aukera){
@@ -305,49 +305,49 @@ public class DB {
     		}
     	}else {
     		switch(aukera) {
-    		case 1:
-                taldearenGirakErakutsi();
-                break;
-            case 2:
-                girarenLekuakErakutsi();
-                break;
-            case 3:
-                diskoarenAbestiakErakutsi();
-                break;
-            case 4:
-                diskoenPrezioakErakutsi();
-                break;
-            case 5:
-                taldeProduktoreBera();
-                break;
-            case 6:
-            	diskoaAbestiazOrdenatuaErakutsi();
-                break;
-            case 7:
-            	giraLekuezOrdenatutaErakutsi();
-                break;
-            case 8:
-            	sarreraErosketaEgin();
-                break;
-            case 9:
-            	diskoErosketaEgin();
-                break;
-            case 10:
-            	if (ondo)giraIrabaziak();
-                break;
-            case 11:
-                if(ondo)diskoIrabaziak();
-                break;
-            case 12:
-            	if(ondo)lekuBakoitzekoBatezbestekoIrabaziak();
-            	break;
-            case 13:
-            	if(ondo)euro1000BainoGehiago2022Lekuak();
-            	break;
-            default:
-                System.out.println("Sartu aukera egoki bat");
-                break;
-        }
+				case 1:
+		            taldearenGirakErakutsi();
+		            break;
+		        case 2:
+		            giraLekuezOrdenatutaErakutsi();
+		            break;
+		        case 3:
+		            diskoarenAbestiakErakutsi();
+		            break;
+		        case 4:
+		            diskoenPrezioakErakutsi();
+		            break;
+		        case 5:
+		            taldeProduktoreBera();
+		            break;
+		        case 6:
+		        	diskoaAbestiazOrdenatuaErakutsi();
+		            break;
+		        /*case 7:
+		        	giraLekuezOrdenatutaErakutsi();
+		            break;*/
+		        case 7:
+		        	sarreraErosketaEgin();
+		            break;
+		        case 8:
+		        	diskoErosketaEgin();
+		            break;
+		        case 9:
+		        	if (ondo)giraIrabaziak();
+		            break;
+		        case 10:
+		            if(ondo)diskoIrabaziak();
+		            break;
+		        case 11:
+		        	if(ondo)lekuBakoitzekoBatezbestekoIrabaziak();
+		        	break;
+		        case 12:
+		        	if(ondo)euro1000BainoGehiago2022Lekuak();
+		        	break;
+		        default:
+		            System.out.println("Sartu aukera egoki bat");
+		            break;
+		    }
     	}
         
     }
@@ -765,7 +765,7 @@ public class DB {
      * @throws IOException
      * @throws SQLException
      */
-    private void girarenLekuakErakutsi(){		
+    /*private void girarenLekuakErakutsi(){		
     	int saiakera=0;
 	    do{
 	    	try{
@@ -792,7 +792,7 @@ public class DB {
     		}
 			saiakera++;
 		}while(saiakera<3);
-    }
+    }*/
 
 
     /**
@@ -981,10 +981,10 @@ public class DB {
 	    	try{
 	        	System.out.println("Sartu taldearen izena:");
 	            String taldeIzen = br.readLine();
-	            System.out.println("Sartu zein den "+taldeIzen+" taldetik ikusi nahi duzun giraren hasiera data (UUUU-HH-EE formatuan): ");
+	            System.out.println("Sartu zein den " + taldeIzen + " taldetik ikusi nahi duzun giraren hasiera data (UUUU-HH-EE formatuan): ");
 	    		String data = konprobatuDataFormatua(br.readLine());
 	            PreparedStatement ps = konexioa.prepareStatement(
-	                    "SELECT  LEKUAN_JO.Izena, LEKUAN_JO.HIRIA, LEKUAN_JO.HERRIALDEA " +
+	                    "SELECT  LEKUAN_JO.Izena, LEKUAN_JO.HIRIA, LEKUAN_JO.HERRIALDEA, LEKUAN_JO.Prezioa " +
 	                    "FROM  TALDE,  LEKUAN_JO " +
 	                    "WHERE TALDE.kodea=LEKUAN_JO.TaldeK AND "+
 	                            "LEKUAN_JO.hasData = ? AND " +
@@ -994,7 +994,7 @@ public class DB {
 	            ps.setString(2,taldeIzen);
 	            ResultSet rs = ps.executeQuery();
 	            while(rs.next()){
-	                System.out.println(rs.getString(1) + " " + rs.getString(2) + " " + rs.getString(3));
+	                System.out.println(rs.getString(1) + " " + rs.getString(2) + " " + rs.getString(3) + " " + rs.getFloat(4)+"€");
 	            }
 	            saiakera=3;
 		    }
