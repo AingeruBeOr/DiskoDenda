@@ -61,7 +61,7 @@ public class DB {
     private void menuErakutsi(){
     	int aukera = -1;
         try {
-        	while(aukera!=20){
+        	while(aukera!=21){
                 System.out.println("  __  __ ______ _   _ _    _         \r\n"
                 		+ " |  \\/  |  ____| \\ | | |  | |  /\\    \r\n"
                 		+ " | \\  / | |__  |  \\| | |  | | /  \\   \r\n"
@@ -96,6 +96,7 @@ public class DB {
                 aukera = Integer.parseInt(br.readLine());
                 aukeraIrakurri(aukera);
             }
+
             konexioa.close();
         }catch(Exception e) {
         	salbuespenaTratatu(e);
