@@ -119,7 +119,7 @@ public class DB {
                 giraBerriakSartu();
                 break;
             case 4:
-                girarenLekuakSartu();
+                girarenLekuakSartu(null,0);
                 break;
             case 5:
                 girarenBukHasDatakAldatu();
@@ -305,9 +305,9 @@ public class DB {
     	do {
     		try {
     			System.out.println("Sartu gira berriaren hasiera data (UUUU-HH-EE formatuan): ");
-    	    	String hasData = br.readLine();
+    	    	String hasData = konprobatuDataFormatua(br.readLine());
     	    	System.out.println("Sartu gira berriaren bukaera data (UUUU-HH-EE formatuan): ");
-    	    	String bukData = br.readLine();
+    	    	String bukData = konprobatuDataFormatua(br.readLine());
     	    	System.out.println("Sartu gira horren talde kodea: ");
     	    	int taldeKode = Integer.parseInt(br.readLine());
     	    	PreparedStatement ps = konexioa.prepareStatement("INSERT INTO GIRA VALUES(?, ?, ?)");
@@ -317,7 +317,7 @@ public class DB {
     	    	ps.executeUpdate();
     	    	System.out.println("Sartu berri duzun gira horretan leku berriak sartu nahi dituzu? (B/E)");
     	    	String erantzun = br.readLine();
-    	    	if(erantzun.equalsIgnoreCase("B")) sortuBerriDenGirarenLekuakSartu(hasData, taldeKode);
+    	    	if(erantzun.equalsIgnoreCase("B")) girarenLekuakSartu(hasData, taldeKode);
     	    	saiakera=3;
     		}
     		catch(Exception e) {
@@ -327,64 +327,24 @@ public class DB {
 		}while(saiakera<3);
     }
     
-    private void sortuBerriDenGirarenLekuakSartu(String hData, int tKode) throws IOException{
-		int saiakera=0;
-	    do{
-	    	try{
-	    		String hizki;
-	    		do {
-	    			System.out.println("Sartu herrialdearen izena: ");
-	    		    String herrialde= br.readLine();
-	    		    System.out.println("Sartu hiriaren izena: ");
-	    		    String hiriIzen= br.readLine();
-	    		    System.out.println("Sartu lekuaren izena: ");
-    	        	String lekua= br.readLine();
-    	    		System.out.println("Sartu sarreren prezioa: ");
-    	        	Float prezioa= Float.valueOf(br.readLine());
-    	        	if(!lekuaExisititzenDa(herrialde, hiriIzen, lekua)) {
-    	        		PreparedStatement ps = konexioa.prepareStatement("INSERT INTO LEKUA VALUES(?, ?, ?)");
-    	        		//Hiria sortzeko:
-    	    			ps.setString(1,lekua);
-    	    			ps.setString(2,hiriIzen);
-    	    	    	ps.setString(3,herrialde);
-    	    	    	ps.executeUpdate();
-    	        	}
-	    		    PreparedStatement ps2 = konexioa.prepareStatement("INSERT INTO LEKUAN_JO VALUES(?, ?, ?, ?, ?, ?, 0)");
-//	    	    	errore++;
-	    	    	//Hiria eta gira konektatzeko:
-	    	    	ps2.setString(1,lekua);
-	    	    	ps2.setString(2,hiriIzen);
-	    	    	ps2.setString(3,herrialde);
-	    	    	ps2.setString(4, hData);
-	    	    	ps2.setInt(5, tKode);
-	    	    	ps2.setFloat(6, prezioa);
-	    	    	ps2.executeUpdate();
-	    	    	System.out.println("Leku gehiagorik sartu nahi duzu? (B/E)");
-	    			hizki=br.readLine();
-	    		}while(hizki.equalsIgnoreCase("B"));
-	    		saiakera=3;
-		    }catch(Exception e) {
-		    	salbuespenaTratatu(e);
-			}
-			saiakera++;
-		}while(saiakera<3);
-    }
-
-    
     /**
      * 
      * @throws SQLException
      * @throws IOException
      * @throws NumberFormatException
      */
-    private void girarenLekuakSartu() {
+    private void girarenLekuakSartu(String hData, int tKode) {
 		int saiakera=0;
+		String hasData = hData;
+		int taldeK = tKode;
 	    do{
 	    	try{
-	    		System.out.println("Sartu jotzen duen taldearen kodea: ");
-	        	int taldeK = Integer.parseInt(br.readLine());
-	        	System.out.println("Sartu gira berriaren hasiera data (UUUU-HH-EE formatuan): ");
-	        	String hasData = konprobatuDataFormatua(br.readLine());
+	    		if(hData == null && tKode == 0) {
+	    			System.out.println("Sartu jotzen duen taldearen kodea: ");
+		        	taldeK = Integer.parseInt(br.readLine());
+		        	System.out.println("Sartu gira berriaren hasiera data (UUUU-HH-EE formatuan): ");
+		        	hasData = konprobatuDataFormatua(br.readLine());
+	    		}
 	        	String hizki;
 	        	do {
 	    			System.out.println("Sartu herrialdearen izena: ");
@@ -451,12 +411,12 @@ public class DB {
 	    		System.out.println("Aldatu nahi duzun girak egiten duen taldearen KODEA adierazi: ");
 	        	int kodea= Integer.parseInt(br.readLine());
 	        	System.out.println("Sartu zein den aldatu nahi duzun giraren hasiera data (UUUU-HH-EE formatuan): ");
-	    		String data=br.readLine();
+	    		String data = konprobatuDataFormatua(br.readLine());
 	        	String dataB;
 	        	System.out.println("Hasiera data aldatu nahi duzu? Horrela bada sakatu 'B' hizkia, bestela sakatu beste bat.");
 	        	if(br.readLine().equalsIgnoreCase("B")) {
 	        		System.out.println("Sartu hasiera data berria (UUUU-HH-EE formatuan): ");
-	        		dataB=br.readLine();
+	        		dataB = konprobatuDataFormatua(br.readLine());
 	        		PreparedStatement ps = konexioa.prepareStatement("UPDATE GIRA SET HasData = ? WHERE TaldeK = ? AND HasData = ?");
 	            	ps.setString(1,dataB);
 	            	ps.setInt(2,kodea);
@@ -466,7 +426,7 @@ public class DB {
 	        	System.out.println("Bukaera data aldatu nahi duzu? Horrela bada sakatu 'B' hizkia, bestela sakatu beste bat.");
 	        	if(br.readLine().equalsIgnoreCase("B")) {
 	        		System.out.println("Sartu bukaera data berria (UUUU-HH-EE formatuan): ");
-	        		dataB=br.readLine();
+	        		dataB = konprobatuDataFormatua(br.readLine());
 	        		PreparedStatement ps = konexioa.prepareStatement("UPDATE GIRA SET BukData = ? WHERE TaldeK = ? AND HasData = ?");
 	            	ps.setString(1,dataB);
 	            	ps.setInt(2,kodea);
@@ -492,9 +452,9 @@ public class DB {
 	    do{
 	    	try{
 	    		System.out.println("Sartu kaleratu nahi duzun taldearen kodea: ");
-	        	String taldeIzen = br.readLine();
+	        	int taldeIzen = Integer.parseInt(br.readLine());
 	        	PreparedStatement ps = konexioa.prepareStatement("DELETE FROM TALDE WHERE Kodea = ?");
-	        	ps.setString(1, taldeIzen);
+	        	ps.setInt(1, taldeIzen);
 	        	ps.executeUpdate();
 	        	saiakera=3;
 		    }
@@ -519,13 +479,13 @@ public class DB {
 	        		System.out.println("Sartu taldearen identifikazio kodea: ");
 	        		int taldeKode = Integer.parseInt(br.readLine());
 	        		System.out.println("Sartu " + taldeKode + " taldearen giraren hasiera-data: ");
-	        		String hasData = br.readLine();
+	        		String hasData = konprobatuDataFormatua(br.readLine());
 	            	System.out.println("Sartu kendu nahi duzun lekuaren hiri izena: ");
-	            	String hiriIzen = br.readLine();
+	            	String hiriIzen = konprobatuDataFormatua(br.readLine());
 	            	System.out.println("Sartu kendu nahi duzun lekuaren herrialdea: ");
 	            	String hiriHerrialde = br.readLine();
 	            	System.out.println("Sartu kendu nahi duzun lekuaren izena: ");
-	            	String lekua=br.readLine();
+	            	String lekua = br.readLine();
 	            	PreparedStatement ps = konexioa.prepareStatement(
 	            			"DELETE FROM Lekuan_Jo " +
 	            			"WHERE Hiria = ? AND  Herrialdea = ? AND HasData = ? AND TaldeK = ? AND Izena = ?"
@@ -584,8 +544,8 @@ public class DB {
 	    	try{
 	    		System.out.println("Sartu taldearen izena:");
 	            String taldeIzen = br.readLine();
-	            System.out.println("Sartu zein den "+taldeIzen+" taldetik ikusi nahi duzun giraren hasiera data (UUUU-HH-EE formatuan): ");
-	    		String data=br.readLine();
+	            System.out.println("Sartu zein den " + taldeIzen + " taldetik ikusi nahi duzun giraren hasiera data (UUUU-HH-EE formatuan): ");
+	    		String data = konprobatuDataFormatua(br.readLine());
 	            PreparedStatement ps = konexioa.prepareStatement(
 	                    "SELECT LEKUAN_JO.Hiria, LEKUAN_JO.Herrialdea, LEKUAN_JO.Izena, LEKUAN_JO.Prezioa " +
 	                    "FROM TALDE, GIRA, LEKUAN_JO " +
@@ -715,7 +675,7 @@ public class DB {
 	    		System.out.println("Sartu talde baten izena: ");
 	            String taldeIzen = br.readLine();
 	            System.out.println("Sartu girak identifikatzen duen hasiera data: ");
-	            String giraData = br.readLine();
+	            String giraData = konprobatuDataFormatua(br.readLine());
 	            PreparedStatement ps = konexioa.prepareStatement(
 	                    "SELECT SUM(LEKUAN_JO.SaldutakoSarrerak * LEKUAN_JO.Prezioa) " +
 	                    "FROM TALDE, GIRA, LEKUAN_JO " +
@@ -798,7 +758,7 @@ public class DB {
 	        	System.out.println("Sartu taldearen izena:");
 	            String taldeIzen = br.readLine();
 	            System.out.println("Sartu zein den "+taldeIzen+" taldetik ikusi nahi duzun giraren hasiera data (UUUU-HH-EE formatuan): ");
-	    		String data=br.readLine();
+	    		String data = konprobatuDataFormatua(br.readLine());
 	            PreparedStatement ps = konexioa.prepareStatement(
 	                    "SELECT  LEKUA.Izena, LEKUA.HIRIA, LEKUA.HERRIALDEA " +
 	                    "FROM LEKUA, TALDE, GIRA, LEKUAN_JO " +
