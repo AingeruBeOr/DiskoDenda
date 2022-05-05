@@ -133,7 +133,7 @@ public class DB {
             		System.out.println("9.- Kalkulatu gira baten irabaziak.");
                     System.out.println("10.- Kalkulatu diskoaren irabaziak.");
                     System.out.println("11.- Talde batek hiri batean lortutako irabaziak.");
-                    System.out.println("12.- 1000€ baino gehiago irabazi duten taldeak erakutsi.");
+                    System.out.println("12.- 1000€ baino gehiago lortu duten lekuak erakutsi.");
             	}
             }
             System.out.println("\n\nAukera bat sartu: ");
@@ -1029,7 +1029,7 @@ public class DB {
     		);
     		ResultSet rs = ps.executeQuery();
     		while(rs.next()) {
-    			System.out.println(rs.getString(1) + rs.getString(2) + rs.getString(3) + rs.getFloat(4)); 
+    			System.out.println(rs.getString(1) + " "+ rs.getString(2) +" "+ rs.getString(3) + " "+ rs.getFloat(4)); 
     		}
 	    }
     	catch(Exception e) {
@@ -1048,7 +1048,7 @@ public class DB {
 			);
 			ResultSet rs = ps.executeQuery();
 			while(rs.next()) {
-				System.out.println(rs.getString(1) + rs.getString(2) + rs.getString(3) + rs.getFloat(4));
+				System.out.println(rs.getString(1) + " "+ rs.getString(2) +" "+ rs.getString(3) + " "+ rs.getFloat(4));
 			}
 		}
 		catch(Exception e) {
