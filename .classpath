@@ -6,7 +6,8 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/Aingueru/Documents/Uni/2/Datu-baseak/Praktikak (Access &amp; MySQL)/7 praktika (MySQL &amp; Java)/mysql-connector-java-8.0.28/mysql-connector-java-8.0.28.jar"/>
+	<!-- <classpathentry kind="lib" path="C:/Users/Aingueru/Documents/Uni/2/Datu-baseak/Praktikak (Access &amp; MySQL)/7 praktika (MySQL &amp; Java)/mysql-connector-java-8.0.28/mysql-connector-java-8.0.28.jar"/> -->
+	<classpathentry kind="lib" path="C:/Users/maiti/OneDrive/Documentos/DB/mysql-connector-java-8.0.28/mysql-connector-java-8.0.28.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

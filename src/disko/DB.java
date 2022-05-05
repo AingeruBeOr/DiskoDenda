@@ -127,8 +127,8 @@ public class DB {
                 System.out.println("5.- Talde bat adierazi, produktore bera erabiltzen duten taldeak lortu.");
                 System.out.println("6.- Abestiak zenbakiaren arabera ordenatu.");
 //                System.out.println("7.- Hiriak izenaren arabera ordenatu.");
-                System.out.println("7.- Sarrera erosi:");
-                System.out.println("8.- Diskoa erosi:");
+                System.out.println("7.- Sarrera erosi.");
+                System.out.println("8.- Diskoa erosi.");
             	if(ondo) {
             		System.out.println("9.- Kalkulatu gira baten irabaziak.");
                     System.out.println("10.- Kalkulatu diskoaren irabaziak.");
