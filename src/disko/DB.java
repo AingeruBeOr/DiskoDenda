@@ -132,7 +132,7 @@ public class DB {
             	if(ondo) {
             		System.out.println("9.- Kalkulatu gira baten irabaziak.");
                     System.out.println("10.- Kalkulatu diskoaren irabaziak.");
-                    System.out.println("11.- Talde batek hiri batean lortutako irabaziak.");
+                    System.out.println("11.- Lekuko lortutako batazbesteko irabaziak.");
                     System.out.println("12.- 1000€ baino gehiago lortu duten lekuak erakutsi.");
             	}
             }
@@ -843,7 +843,7 @@ public class DB {
     	        ps.setString(1, taldeIzen);
     	        ResultSet rs = ps.executeQuery();
     	        while(rs.next()){
-    	            System.out.println(rs.getString(1) + " " + rs.getFloat(2));
+    	            System.out.println(rs.getString(1) + " " + rs.getFloat(2)+"€");
     	        }
     			saiakera=3;
     		}
@@ -921,7 +921,7 @@ public class DB {
 	            ps.setString(2,giraData);
 	            ResultSet rs = ps.executeQuery();
 	            rs.next();
-	            System.out.println(rs.getString(1));
+	            System.out.println(rs.getString(1)+"€");
 	            saiakera=3;
 		    }
 	    	catch(Exception e) {
@@ -944,7 +944,7 @@ public class DB {
     	        ps.setString(1,diskoIzen);
     	        ResultSet rs = ps.executeQuery();
     	        rs.next();
-    	        System.out.println(rs.getFloat(1));
+    	        System.out.println(rs.getFloat(1)+"€");
     			saiakera=3;
     		}
     		catch(Exception e) {
@@ -963,7 +963,7 @@ public class DB {
     	    	System.out.println("Sartu taldearen izena ");
     	    	String taldeIzena = br.readLine();
     	    	PreparedStatement ps = konexioa.prepareStatement(
-    	    			"SELECT  DISKO.Kodea, DISKO.Izena, ABESTIA.* " + 
+    	    			"SELECT  Abestia.Zenbakia, Abestia.Izena,  DISKO.Izena " + 
     	    			"FROM TALDE, DISKO, ABESTIA " + 
     	    			"WHERE TALDE.kodea = DISKO.TaldeK AND " + 
     	    			"DISKO.Kodea=ABESTIA.DiskoK AND DISKO.Izena=?  AND TALDE.Izena= ?  " + 
@@ -972,7 +972,7 @@ public class DB {
     	        ps.setString(2,taldeIzena);
     	        ResultSet rs = ps.executeQuery();
     	        while(rs.next()){
-    	            System.out.println(rs.getInt(1) + " " + rs.getString(2) + " " + rs.getString(3) + " " + rs.getInt(4) + " " + rs.getInt(5));
+    	            System.out.println(rs.getInt(1) + " " + rs.getString(2) + " " + rs.getString(3));
     	        }
     			saiakera=3;
     		}
@@ -1029,7 +1029,7 @@ public class DB {
     		);
     		ResultSet rs = ps.executeQuery();
     		while(rs.next()) {
-    			System.out.println(rs.getString(1) + " "+ rs.getString(2) +" "+ rs.getString(3) + " "+ rs.getFloat(4)); 
+    			System.out.println(rs.getString(1) + " "+ rs.getString(2) +" "+ rs.getString(3) + " "+ rs.getFloat(4)+"€"); 
     		}
 	    }
     	catch(Exception e) {
@@ -1048,7 +1048,7 @@ public class DB {
 			);
 			ResultSet rs = ps.executeQuery();
 			while(rs.next()) {
-				System.out.println(rs.getString(1) + " "+ rs.getString(2) +" "+ rs.getString(3) + " "+ rs.getFloat(4));
+				System.out.println(rs.getString(1) + " "+ rs.getString(2) +" "+ rs.getString(3) + " "+ rs.getFloat(4)+"€");
 			}
 		}
 		catch(Exception e) {
@@ -1112,13 +1112,13 @@ public class DB {
 	            boolean daude=false;
 	            while(rs.next()){
 	            	daude=true;
-	                System.out.println(rs.getString(1)+" "+rs.getString(2)+" "+rs.getString(3)+" "+rs.getString(4)+" "+rs.getFloat(5));
+	                System.out.println(rs.getString(1)+" "+rs.getString(2)+" "+rs.getString(3)+" "+rs.getString(4)+" "+rs.getFloat(5)+"€");
 	            }
 	            if(daude) {
 	            	System.out.println("Aukeratu horietako bat: ");
 	 	            System.out.println("Sartu hasiera data (UUUU-HH-EE formatuan): ");
 	 	            String hasData = konprobatuDataFormatua(br.readLine());
-	 	            System.out.println("Sart herrialdearen izena: ");
+	 	            System.out.println("Sartu herrialdearen izena: ");
 	 	            String herrialdea = br.readLine();
 	 	            System.out.println("Sartu hiriaren izena: ");
 	 	            String hiria = br.readLine();
@@ -1127,7 +1127,7 @@ public class DB {
 	 	            System.out.println("Sartu erosi nahi dituzun sarrera kopurua: ");
 	 	            int kop = Integer.parseInt(br.readLine());
 	 	            sarrerakEguneratu(kop, hasData, herrialdea,hiria, lekuIzen);
-	 	            System.out.println("Erosketa zuzen burtu da.");
+	 	            System.out.println("Erosketa zuzen burutu da.");
 	            }else {System.out.println("Ez daude " + taldeIzen + " taldearen girak eskuragarri, bilatu beste talde batenak.");}
     			saiakera=3;
     		}
