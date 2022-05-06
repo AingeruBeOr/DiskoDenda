@@ -83,7 +83,7 @@ public class DB {
             System.out.println("5.- Gira baten barruan hiri berriak sartu.");
             System.out.println("\n\nAukera bat sartu: ");
             aukera = Integer.parseInt(br.readLine());
-            aukeraIrakurri2(aukera, 1, true);
+            aukeraIrakurri(aukera, 1, true);
 
         }catch(Exception e) {
         	salbuespenaTratatu(e);
@@ -98,7 +98,7 @@ public class DB {
             System.out.println("3.- Girako hiriak kendu.");
             System.out.println("\n\nAukera bat sartu: ");
             aukera = Integer.parseInt(br.readLine());
-            aukeraIrakurri2(aukera,2,true);
+            aukeraIrakurri(aukera,2,true);
         }catch(Exception e) {
         	salbuespenaTratatu(e);
         }
@@ -136,14 +136,14 @@ public class DB {
             }
             System.out.println("\n\nAukera bat sartu: ");
             aukera = Integer.parseInt(br.readLine());
-            aukeraIrakurri2(aukera,3,ondo);
+            aukeraIrakurri(aukera,3,ondo);
    
         }catch(Exception e) {
         	salbuespenaTratatu(e);
         }
     }
 
-    private void aukeraIrakurri2(int aukera, int menu, boolean ondo){
+    private void aukeraIrakurri(int aukera, int menu, boolean ondo){
     	if(menu==1) {
     		switch (aukera){
         	case 1:
@@ -261,6 +261,7 @@ public class DB {
     private void taldeakSartu() {
     	int saiakera = 0,kode =0;
     	boolean ondo = false;
+    	String partaideak = null;
     	do{
 			try {
 				//Taldea sartzeko:
@@ -278,15 +279,16 @@ public class DB {
 		    	ps.setString(3, desk);
 		    	ps.setInt(4, pKode);
 		    	ps.executeUpdate();
-		    	saiakera = 3;
 		    	ondo = true;
+		    	System.out.println("Partaideak sartu nahi dituzu? (B/E)");
+		    	partaideak = br.readLine();
 			}catch(Exception e) {
 				salbuespenaTratatu(e);
 			}
 			saiakera++;
-    	}while(saiakera<3);
+    	}while(saiakera<3 && !ondo);
     	//Partaideak sartzeko:
-    	if(ondo) {
+    	if(ondo && partaideak.equalsIgnoreCase("B")) {
     		saiakera = 0;
     		do {
         		String hizki;
@@ -304,6 +306,7 @@ public class DB {
     					System.out.println("Partaide gehiagorik sartu nahi duzu? (B/E)");
     					hizki = br.readLine();
         			} while(hizki.equalsIgnoreCase("B"));
+        			saiakera = 3;
         		} catch(Exception e) {
         			salbuespenaTratatu(e);
         		}
@@ -1056,8 +1059,8 @@ public class DB {
     		SQLException eaux = (SQLException) e; 
     		System.out.println("ERRORE BAT SUERTATU DA DATU BASEAREKIN");
     		System.out.println(eaux.getMessage());
-    		System.out.println(eaux.getErrorCode());
-    		if (eaux.getErrorCode()==1062) System.out.println("Kode hori duen produktorea existitzen da.");
+    		//System.out.println(eaux.getErrorCode());
+    		//if (eaux.getErrorCode()==1062) System.out.println("Kode hori duen produktorea existitzen da.");
     	}
     	else if(e instanceof DataFormatException) {
     		//DataFormatException eaux = (DataFormatException) e;
