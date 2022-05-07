@@ -4,9 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.*;
+import java.util.GregorianCalendar;
 import java.util.zip.DataFormatException;
 
-import Salbuespenak.StringLuzeegiaException;
+import Salbuespenak.StringEzEgokiException;
 //
 public class DB {
     private BufferedReader br;
@@ -238,6 +239,7 @@ public class DB {
     		try {
         		System.out.println("Sartu produktorearen izena: ");
             	String izena = stringEgokiaDa(br.readLine(), 15);
+            	System.out.println(izena.length());
             	System.out.println("Sartu produktorearen kodea: ");
             	int kodea = Integer.parseInt(br.readLine());
             	System.out.println("Sartu produktorearen telefono zenbakia: ");
@@ -417,28 +419,46 @@ public class DB {
     }
     
     /**
-     * 
+     * Gira baten lekuak sartzeko erabiltzen da. Paremetroak null eta 0 badira, hurrenez hurren, giraren hasiera data eta taldearen
+     * kodea sartzea eskatuko da.
+     * @param hData giraren hasiera data
+     * @param tKode talderaen kodea
      */
     private void girarenLekuakSartu(String hData, int tKode) {
 		int saiakera=0;
 		String hasData = hData;
 		int taldeK = tKode;
+		boolean giraDago = true;
+		if(hasData == null || taldeK == 0) giraDago = false;
+		while(!giraDago && saiakera < 3) {
+			try {
+				System.out.println("Sartu jotzen duen taldearen kodea: ");
+				taldeK = Integer.parseInt(br.readLine());
+				System.out.println("Sartu gira berriaren hasiera data (UUUU-HH-EE formatuan): ");
+				hasData = konprobatuDataFormatua(br.readLine());
+				PreparedStatement ps = konexioa.prepareStatement("SELECT * FROM GIRA WHERE taldek = ? and hasdata = ?");
+				ps.setInt(1, taldeK);
+				ps.setString(2, hasData);
+				ResultSet rs = ps.executeQuery();
+				if(rs.next()) giraDago = true;
+				else System.out.println("Gira hori ez da existitzen.");
+			} catch (Exception e) {
+				salbuespenaTratatu(e);
+			}
+			saiakera++;
+		}
+		
+		saiakera = 0;
 	    do{
 	    	try{
-	    		if(hData == null && tKode == 0) {
-	    			System.out.println("Sartu jotzen duen taldearen kodea: ");
-		        	taldeK = Integer.parseInt(br.readLine());
-		        	System.out.println("Sartu gira berriaren hasiera data (UUUU-HH-EE formatuan): ");
-		        	hasData = konprobatuDataFormatua(br.readLine());
-	    		}
 	        	String hizki;
 	        	do {
 	    			System.out.println("Sartu herrialdearen izena: ");
-	    		    String herrialde= br.readLine();
+	    		    String herrialde = stringEgokiaDa(br.readLine(),15);
 	    		    System.out.println("Sartu hiriaren izena: ");
-	    		    String hiriIzen= br.readLine();
+	    		    String hiriIzen = stringEgokiaDa(br.readLine(),15);
 	    		    System.out.println("Sartu lekuaren izena: ");
-    	        	String lekua= br.readLine();
+    	        	String lekua = stringEgokiaDa(br.readLine(),15);
     	    		System.out.println("Sartu sarreren prezioa: ");
     	        	Float prezioa= Float.valueOf(br.readLine());
     	        	if(!lekuaExisititzenDa(herrialde, hiriIzen, lekua)) {
@@ -474,20 +494,39 @@ public class DB {
   //************************************************UPDATE************************************************************
     /**
      * Gira bateko datetan arazoak egonda hauek aldatuko dira:
+     * <ul>
+     * 		<li>Hasiera data</li>
+     * 		<li>Bukaera data</li>
+     * </ul>
      */
     private void girarenBukHasDatakAldatu(){
     	int saiakera=0;
+    	int kodea = 0;
+    	String data = null;
+    	do {
+    		try {
+    			System.out.println("Aldatu nahi duzun girak egiten duen taldearen KODEA adierazi: ");
+    			kodea = Integer.parseInt(br.readLine());
+    			System.out.println("Sartu zein den aldatu nahi duzun giraren hasiera data (UUUU-HH-EE formatuan): ");
+    			data = konprobatuDataFormatua(br.readLine());
+    			PreparedStatement ps = konexioa.prepareStatement("SELECT * FROM GIRA WHERE hasdata = ? and taldek = ?");
+    			ps.setString(1, data);
+    			ps.setInt(2, kodea);
+    			ResultSet rs = ps.executeQuery();
+    			if(rs.next()) saiakera = 3;
+    			else System.out.println("Gira hori ez da existitzen.");
+			} catch (Exception e) {
+				salbuespenaTratatu(e);
+			}
+    		saiakera++;
+		} while (saiakera < 3);
+    	
 	    do{
 	    	try{
-	    		System.out.println("Aldatu nahi duzun girak egiten duen taldearen KODEA adierazi: ");
-	        	int kodea= Integer.parseInt(br.readLine());
-	        	System.out.println("Sartu zein den aldatu nahi duzun giraren hasiera data (UUUU-HH-EE formatuan): ");
-	    		String data = konprobatuDataFormatua(br.readLine());
-	        	String dataB;
 	        	System.out.println("Hasiera data aldatu nahi duzu? Horrela bada sakatu 'B' hizkia, bestela sakatu beste bat.");
 	        	if(br.readLine().equalsIgnoreCase("B")) {
 	        		System.out.println("Sartu hasiera data berria (UUUU-HH-EE formatuan): ");
-	        		dataB = konprobatuDataFormatua(br.readLine());
+	        		String dataB = konprobatuDataFormatua(br.readLine());
 	        		PreparedStatement ps = konexioa.prepareStatement("UPDATE GIRA SET HasData = ? WHERE TaldeK = ? AND HasData = ?");
 	            	ps.setString(1,dataB);
 	            	ps.setInt(2,kodea);
@@ -497,7 +536,7 @@ public class DB {
 	        	System.out.println("Bukaera data aldatu nahi duzu? Horrela bada sakatu 'B' hizkia, bestela sakatu beste bat.");
 	        	if(br.readLine().equalsIgnoreCase("B")) {
 	        		System.out.println("Sartu bukaera data berria (UUUU-HH-EE formatuan): ");
-	        		dataB = konprobatuDataFormatua(br.readLine());
+	        		String dataB = konprobatuDataFormatua(br.readLine());
 	        		PreparedStatement ps = konexioa.prepareStatement("UPDATE GIRA SET BukData = ? WHERE TaldeK = ? AND HasData = ?");
 	            	ps.setString(1,dataB);
 	            	ps.setInt(2,kodea);
@@ -1025,24 +1064,95 @@ public class DB {
     }
     
     /**
-     * String bat UUUU-HH-EE formatuan idatzita dagoen konprobatzen du.
+     * String bat UUUU-HH-EE formatuan idatzita dagoen konprobatzen du. Beste hurrengo datu formatuak ere onartuko dira:
+     * <ul>
+     * 		<li>U-HH-EE</li>
+     * 		<li>U-HH-E</li>
+     * 		<li>U-H-EE</li>
+     * 		<li>U-H-E</li>
+     * 		<li>//TOwrite</li>
+     * </ul>
      * @param pKonprobatzeko
      * @throws DataFormatException
      */
     private String konprobatuDataFormatua(String pKonprobatzeko) throws DataFormatException{
-    	char karakterea;
-    	boolean bukatu = false;
     	int i = 0;
-    	while(i < 9 && !bukatu) {
-        	karakterea = pKonprobatzeko.charAt(i);
-        	if(i == 0 || i == 1 || i == 2 || i ==3 || i == 5 || i == 6 || i == 8 || i == 9) {
-        		if(!Character.isDigit(karakterea)) bukatu = true;
-        	}
-        	else if(karakterea != '-') bukatu = true;
-        	i++;
-    	}
-    	if(bukatu) throw new DataFormatException();
-    	else return pKonprobatzeko;
+    	int urteZifraKop = 0;
+    	int hilabeteZifraKop = 0;
+    	int egunZifraKop = 0;
+    	int urtea = 0;
+    	int hilabetea = 0;
+    	int eguna = 0;
+    	boolean bukatu = false;
+    	//********************* Urtea konprobatu: ****************************************** 
+    	if(i < pKonprobatzeko.length() && Character.isDigit(pKonprobatzeko.charAt(i))) {
+    		urtea = Character.getNumericValue(pKonprobatzeko.charAt(i));
+    		i++; urteZifraKop++;
+    		while(!bukatu) {
+    			if(i < pKonprobatzeko.length()) {
+    				if(Character.isDigit(pKonprobatzeko.charAt(i)) && urteZifraKop < 4) {
+    					urtea = urtea * 10;
+    					urtea = urtea + Character.getNumericValue(pKonprobatzeko.charAt(i));
+    					i++; urteZifraKop++;
+    				}
+    				else if(pKonprobatzeko.charAt(i) == '-') {
+    					bukatu = true; i++;
+    				}
+    				else throw new DataFormatException();
+    			}
+    			else throw new DataFormatException();
+    		}
+		}
+		else throw new DataFormatException();
+    	
+    	// ******************* Hilabetea konprobatu: *************************************
+		if(i < pKonprobatzeko.length() && Character.isDigit(pKonprobatzeko.charAt(i))){
+			hilabetea = Character.getNumericValue(pKonprobatzeko.charAt(i));
+			i++; hilabeteZifraKop++;
+			bukatu = false;
+			while(!bukatu) {
+				if(i < pKonprobatzeko.length()) {
+					if(Character.isDigit(pKonprobatzeko.charAt(i)) && hilabeteZifraKop < 2) {
+						hilabetea = hilabetea * 10;
+						hilabetea = hilabetea + Character.getNumericValue(pKonprobatzeko.charAt(i));
+						i++; hilabeteZifraKop++;
+					}
+					else if(pKonprobatzeko.charAt(i) == '-') {
+						bukatu = true; 
+						i++;
+					}
+					else throw new DataFormatException();
+				}
+				else throw new DataFormatException();
+			}
+		}
+		else throw new DataFormatException();
+		if(hilabetea < 1 || hilabetea > 12) throw new DataFormatException();
+		
+		// ********************* Eguna konprobatu: **************************************
+		if(i < pKonprobatzeko.length() && Character.isDigit(pKonprobatzeko.charAt(i))){
+			eguna = Character.getNumericValue(pKonprobatzeko.charAt(i));
+			i++; egunZifraKop++;
+			bukatu = false;
+			while(!bukatu) {
+				if(i < pKonprobatzeko.length()) {
+					if(Character.isDigit(pKonprobatzeko.charAt(i)) && egunZifraKop < 2) {
+						eguna = eguna * 10;
+						eguna = eguna + Character.getNumericValue(pKonprobatzeko.charAt(i));
+						i++; egunZifraKop++;
+					}
+					else throw new DataFormatException();
+				}
+				else bukatu = true;
+			}
+		}
+		else throw new DataFormatException();
+		
+		if(eguna < 1) throw new DataFormatException();
+		if((hilabetea == 1 || hilabetea == 3 || hilabetea == 5 || hilabetea == 7 || hilabetea == 8 || hilabetea == 10 || hilabetea == 12) && eguna > 31) throw new DataFormatException();
+		if((hilabetea == 4 || hilabetea == 6 || hilabetea == 9 || hilabetea == 11) && eguna > 30) throw new DataFormatException();
+		if(hilabetea == 2 && ((new GregorianCalendar().isLeapYear(urtea) && eguna > 29) || (!new GregorianCalendar().isLeapYear(urtea) && eguna > 28))) throw new DataFormatException();
+    	return pKonprobatzeko;
     }
     
     /**
@@ -1050,10 +1160,11 @@ public class DB {
      * @param pKonprobatzekoString
      * @param luzera pKonprobatzekoString izan behar duen gehienezko luzeera
      * @return
-     * @throws StringLuzeegiaException
+     * @throws StringEzEgokiException
      */
-    private String stringEgokiaDa(String pKonprobatzekoString, int luzera) throws StringLuzeegiaException{
-    	if(pKonprobatzekoString.length() > luzera) throw new StringLuzeegiaException();
+    private String stringEgokiaDa(String pKonprobatzekoString, int luzera) throws StringEzEgokiException{
+    	if(pKonprobatzekoString.length() > luzera) throw new StringEzEgokiException(true);
+    	else if(pKonprobatzekoString.length() == 0) throw new StringEzEgokiException(false);
     	return pKonprobatzekoString;
     }
     
@@ -1062,8 +1173,8 @@ public class DB {
      * @param e
      */
     private void salbuespenaTratatu(Exception e) {
-    	if(e instanceof StringLuzeegiaException) {
-    		StringLuzeegiaException eaux = (StringLuzeegiaException) e;
+    	if(e instanceof StringEzEgokiException) {
+    		StringEzEgokiException eaux = (StringEzEgokiException) e;
     		eaux.mezuaInprimatu();
     	}
     	else if(e instanceof NumberFormatException) {
@@ -1078,7 +1189,7 @@ public class DB {
     	}
     	else if(e instanceof DataFormatException) {
     		//DataFormatException eaux = (DataFormatException) e;
-    		System.out.println("Sartu duzun data formatua ez da egokia.");
+    		System.out.println("Sartu duzun data ez da egokia.");
     	}
     }
 }
