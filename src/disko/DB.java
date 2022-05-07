@@ -709,32 +709,54 @@ public class DB {
      */
     private void diskoarenAbestiakErakutsi(){
     	int saiakera=0;
-	    do{
-	    	try{
-	    		System.out.println("Sartu taldearen izena:");
-	            String taldeIzen = br.readLine();
-	            System.out.println("Sartu " + taldeIzen + " taldearen diskoaren izena:");
-	            String diskoIzen = br.readLine();
-	            PreparedStatement ps = konexioa.prepareStatement(
-	                    "SELECT  DISKO.Izena, ABESTIA.* " +
-	                    "FROM TALDE, DISKO, ABESTIA " +
-	                    "WHERE TALDE.kodea = DISKO.TaldeK AND " +
-	                            "DISKO.Kodea = ABESTIA.DiskoK AND " +
-	                            "DISKO.izena = ? AND " +
-	                            "TALDE.Izena = ?");
-	            ps.setString(1,diskoIzen);
-	            ps.setString(2,taldeIzen);
-	            ResultSet rs = ps.executeQuery();
-	            while(rs.next()){
-	                System.out.println(rs.getString(1) + " " + rs.getInt(2) + " " + rs.getString(3));
-	            }
-	            saiakera=3;
-		    }
-	    	catch(Exception e) {
-    			salbuespenaTratatu(e);
-    		}
-			saiakera++;
-		}while(saiakera<3);
+    	boolean ondo=false;
+    	String taldeIzen="";
+    	do {
+    		try {
+    			System.out.println("Sartu taldearen izena:");
+	            taldeIzen = br.readLine();
+    			PreparedStatement ps = konexioa.prepareStatement("SELECT * FROM TALDE WHERE izena = ?");
+    			ps.setString(1, taldeIzen);
+    			ResultSet rs = ps.executeQuery();
+    			if(rs.next()) {
+    				saiakera = 3; 
+    				ondo=true;
+    			}else System.out.println("Talde hori ez da existitzen.");
+			} catch (Exception e) {
+				salbuespenaTratatu(e);
+			}
+    		saiakera++;
+		} while (saiakera < 3);
+    	
+	    if(ondo) {
+	    	do{
+		    	try{
+		    		saiakera=0;
+		            System.out.println("Sartu " + taldeIzen + " taldearen diskoaren izena:");
+		            String diskoIzen = br.readLine();
+		            PreparedStatement ps = konexioa.prepareStatement(
+		                    "SELECT  DISKO.Izena, ABESTIA.* " +
+		                    "FROM TALDE, DISKO, ABESTIA " +
+		                    "WHERE TALDE.kodea = DISKO.TaldeK AND " +
+		                            "DISKO.Kodea = ABESTIA.DiskoK AND " +
+		                            "DISKO.izena = ? AND " +
+		                            "TALDE.Izena = ?");
+		            ps.setString(1,diskoIzen);
+		            ps.setString(2,taldeIzen);
+		            ResultSet rs = ps.executeQuery();
+		            while(rs.next()){
+		                System.out.println(rs.getString(1) + " " + rs.getInt(2) + " " + rs.getString(3));
+		                ondo=false;
+		            }
+		            if(ondo)System.out.println("Talde horretan ez dago izen hori duen diskorik.");
+		            else saiakera=3;
+			    }
+		    	catch(Exception e) {
+	    			salbuespenaTratatu(e);
+	    		}
+				saiakera++;
+			}while(saiakera<3);
+	    }
     }
 
     private void diskoenPrezioakErakutsi() {
@@ -768,39 +790,60 @@ public class DB {
      */
     private void taldeProduktoreBera() {
     	int saiakera=0;
-	    do{
-	    	try{
-	    		System.out.println("Sartu taldearen izena:");
-	            String taldeIzen = br.readLine();
-	            PreparedStatement ps = konexioa.prepareStatement(
-	                    "SELECT distinct TALDE.Izena " +
-	                    "FROM TALDE, PRODUKTOREA " +
-	                    "WHERE TALDE.ProdKode IN " +
-	                            "(SELECT TALDE.ProdKode " +
-	                            "FROM TALDE " +
-	                            "WHERE TALDE.izena = ?) " +
-	                    "EXCEPT "+
-	                    "SELECT izena " +
-	                    "FROM TALDE " +
-	                    "WHERE izena = ?");
-	            ps.setString(1, taldeIzen);
-	            ps.setString(2, taldeIzen);
-	            ResultSet rs = ps.executeQuery();
-	            if(!rs.next()) System.out.println("Ez daude talderik sartu duzun taldearen produktore berarekin");
-	            else {
-		            System.out.println("Hauek dira " + taldeIzen + " taldeak bere produktorea konpartitzen duen taldeak:\n");
-	            	System.out.println(rs.getString(1));
-		            while(rs.next()){
-		                System.out.println(rs.getString(1));
+    	String taldeIzen="";
+    	boolean ondo =false;
+    	do {
+    		try {
+    			System.out.println("Sartu taldearen izena:");
+	             taldeIzen = br.readLine();
+    			
+    			PreparedStatement ps = konexioa.prepareStatement("SELECT * FROM TALDE WHERE izena = ?");
+    			ps.setString(1, taldeIzen);
+    			ResultSet rs = ps.executeQuery();
+    			if(rs.next()) {
+    				saiakera = 3; 
+    				ondo=true;
+    			}else System.out.println("Talde hori ez da existitzen.");
+			} catch (Exception e) {
+				salbuespenaTratatu(e);
+			}
+    		saiakera++;
+		} while (saiakera < 3);
+    	if(ondo) {
+    		saiakera=0;
+	    	do{
+	    		try{
+		            PreparedStatement ps = konexioa.prepareStatement(
+		                    "SELECT distinct TALDE.Izena " +
+		                    "FROM TALDE, PRODUKTOREA " +
+		                    "WHERE TALDE.ProdKode IN " +
+		                            "(SELECT TALDE.ProdKode " +
+		                            "FROM TALDE " +
+		                            "WHERE TALDE.izena = ?) " +
+		                    "EXCEPT "+
+		                    "SELECT izena " +
+		                    "FROM TALDE " +
+		                    "WHERE izena = ?");
+		            ps.setString(1, taldeIzen);
+		            ps.setString(2, taldeIzen);
+		            ResultSet rs = ps.executeQuery();
+		            if(!rs.next()) System.out.println("Ez daude talderik sartu duzun taldearen produktore berarekin");
+		            else {
+			            System.out.println("Hauek dira " + taldeIzen + " taldeak bere produktorea konpartitzen duen taldeak:\n");
+		            	System.out.println(rs.getString(1));
+			            while(rs.next()){
+			                System.out.println(rs.getString(1));
+			            }
 		            }
-	            }
-	            saiakera=3;
-		    }
-	    	catch(Exception e) {
-    			salbuespenaTratatu(e);
-    		}
-			saiakera++;
-		}while(saiakera<3);
+		            saiakera=3;
+			    }
+		    	catch(Exception e) {
+	    			salbuespenaTratatu(e);
+	    		}
+				saiakera++;
+			}while(saiakera<3);
+    	}
+	    	
     }
 
     /**
@@ -863,32 +906,53 @@ public class DB {
 
     private void diskoaAbestiazOrdenatuaErakutsi() {
     	int saiakera=0;
+    	boolean ondo=false;
+    	String taldeIzen="";
     	do {
     		try {
-    			System.out.println("Sartu disko baten izena: ");
-    	    	String diskoIzena = br.readLine();
-    	    	System.out.println("Sartu taldearen izena ");
-    	    	String taldeIzena = br.readLine();
-    	    	PreparedStatement ps = konexioa.prepareStatement(
-    	    			"SELECT  Abestia.Zenbakia, Abestia.Izena,  DISKO.Izena " + 
-    	    			"FROM TALDE, DISKO, ABESTIA " + 
-    	    			"WHERE TALDE.kodea = DISKO.TaldeK AND " + 
-    	    			"DISKO.Kodea=ABESTIA.DiskoK AND DISKO.Izena=?  AND TALDE.Izena= ?  " + 
-    	    			"ORDER BY ABESTIA.Zenbakia ");
-    	    	ps.setString(1,diskoIzena);
-    	        ps.setString(2,taldeIzena);
-    	        ResultSet rs = ps.executeQuery();
-    	        while(rs.next()){
-    	            System.out.println(rs.getInt(1) + " " + rs.getString(2) + " " + rs.getString(3));
-    	        }
-    			saiakera=3;
-    		}
-    		catch(Exception e) {
-    			salbuespenaTratatu(e);
-    		}
+    			System.out.println("Sartu taldearen izena:");
+	            taldeIzen = br.readLine();
+    			PreparedStatement ps = konexioa.prepareStatement("SELECT * FROM TALDE WHERE izena = ?");
+    			ps.setString(1, taldeIzen);
+    			ResultSet rs = ps.executeQuery();
+    			if(rs.next()) {
+    				saiakera = 3; 
+    				ondo=true;
+    			}else System.out.println("Talde hori ez da existitzen.");
+			} catch (Exception e) {
+				salbuespenaTratatu(e);
+			}
     		saiakera++;
-    	}while(saiakera<3);
+		} while (saiakera < 3);
     	
+	    if(ondo) {
+	    	saiakera=0;
+	    	do{
+		    	try{
+		            System.out.println("Sartu " + taldeIzen + " taldearen diskoaren izena:");
+		            String diskoIzen = br.readLine();
+		            PreparedStatement ps = konexioa.prepareStatement(
+	    	    			"SELECT  Abestia.Zenbakia, Abestia.Izena,  DISKO.Izena " + 
+	    	    			"FROM TALDE, DISKO, ABESTIA " + 
+	    	    			"WHERE TALDE.kodea = DISKO.TaldeK AND " + 
+	    	    			"DISKO.Kodea=ABESTIA.DiskoK AND DISKO.Izena=?  AND TALDE.Izena= ?  " + 
+	    	    			"ORDER BY ABESTIA.Zenbakia ");
+	    	    	ps.setString(1,diskoIzen);
+	    	        ps.setString(2,taldeIzen);
+	    	        ResultSet rs = ps.executeQuery();
+	    	        while(rs.next()){
+	    	            System.out.println(rs.getInt(1) + " " + rs.getString(2) + " " + rs.getString(3));
+	    	            ondo=false;
+	    	        }
+		            if(ondo)System.out.println("Talde horretan ez dago izen hori duen diskorik.");
+		            else saiakera=3;
+			    }
+		    	catch(Exception e) {
+	    			salbuespenaTratatu(e);
+	    		}
+				saiakera++;
+			}while(saiakera<3);
+	    }
     }
 
     private void giraLekuezOrdenatutaErakutsi() {	
@@ -1001,9 +1065,9 @@ public class DB {
     		saiakera++;
     	}while(saiakera<3);
     }
-    
-    private void sarreraErosketaEgin() {
-    	int saiakera=0;
+    /*
+     * int saiakera=0;
+    	boolean ondo=false;
     	do {
     		try {
     			System.out.println("Sartu taldearen izena:");
@@ -1022,23 +1086,96 @@ public class DB {
 	                System.out.println(rs.getString(1)+" "+rs.getString(2)+" "+rs.getString(3)+" "+rs.getString(4)+" "+rs.getFloat(5)+"€");
 	            }
 	            if(daude) {
-	            	System.out.println("Aukeratu horietako bat: ");
-	 	            System.out.println("Sartu hasiera data (UUUU-HH-EE formatuan): ");
-	 	            String hasData = konprobatuDataFormatua(br.readLine());
-	 	            System.out.println("Sartu herrialdearen izena: ");
-	 	            String herrialdea = br.readLine();
-	 	            System.out.println("Sartu hiriaren izena: ");
-	 	            String hiria = br.readLine();
-	 	            System.out.println("Sartu lekuaren izena: ");
-	 	            String lekuIzen = br.readLine();
-	 	            System.out.println("Sartu erosi nahi dituzun sarrera kopurua: ");
-	 	            int kop = Integer.parseInt(br.readLine());
-	 	            sarrerakEguneratu(kop, hasData, herrialdea,hiria, lekuIzen);
-	 	            System.out.println("Erosketa zuzen burutu da.");
+	            	do {
+	            		try {
+	            			System.out.println("Aukeratu horietako bat: ");
+	    	 	            System.out.println("Sartu hasiera data (UUUU-HH-EE formatuan): ");
+	    	 	            String hasData = konprobatuDataFormatua(br.readLine());
+	    	 	            System.out.println("Sartu herrialdearen izena: ");
+	    	 	            String herrialdea = br.readLine();
+	    	 	            System.out.println("Sartu hiriaren izena: ");
+	    	 	            String hiria = br.readLine();
+	    	 	            System.out.println("Sartu lekuaren izena: ");
+	    	 	            String lekuIzen = br.readLine();
+	    	 	            System.out.println("Sartu erosi nahi dituzun sarrera kopurua: ");
+	    	 	            int kop = Integer.parseInt(br.readLine());
+	    	 	            PreparedStatement ps2 = konexioa.prepareStatement("SELECT * FROM Lekuan_jo WHERE Herrialdea = ? AND Hiria = ? AND izena = ? AND hasData= ?");
+	    	 	           ps2.setString(1, herrialdea);
+	    	 	           ps2.setString(2, hiria);
+	    	 	           ps2.setString(3, lekuIzen);
+	    	 	           ps2.setString(4, hasData);
+	    	    			ResultSet rs2 = ps.executeQuery();
+	    	        
+	            			if(rs2.next()) {
+	            				saiakera = 3; 
+	            				sarrerakEguneratu(kop, hasData, herrialdea,hiria, lekuIzen);
+		    	 	            System.out.println("Erosketa zuzen burutu da.");
+	            			}else System.out.println("Talde hori ez da existitzen.");
+	        			} catch (Exception e) {
+	        				salbuespenaTratatu(e);
+	        			}
+	            		saiakera++;
+	        		} while (saiakera < 3);
 	            }else {System.out.println("Ez daude " + taldeIzen + " taldearen girak eskuragarri, bilatu beste talde batenak.");}
-    			saiakera=3;
+	            saiakera=3;
+    		}catch(Exception e) {
+    			salbuespenaTratatu(e);
     		}
-    		catch(Exception e) {
+    		saiakera++;
+    	}while(saiakera<3);*/
+    private void sarreraErosketaEgin() {
+    	int saiakera=0;
+    	do {
+    		try {
+    			System.out.println("Sartu taldearen izena:");
+	            String taldeIzen = br.readLine();
+	            PreparedStatement ps = konexioa.prepareStatement(
+	            		"SELECT LEKUAN_JO.hasData, LEKUAN_JO.herrialdea, LEKUAN_JO.Hiria, LEKUAN_JO.Izena, LEKUAN_JO.Prezioa " + 
+	            		"FROM  TALDE, LEKUAN_JO " + 
+	            		"WHERE TALDE.izena = ? and TALDE.kodea = LEKUAN_JO.taldek "
+	            );
+	            ps.setString(1,taldeIzen);
+	            ResultSet rs = ps.executeQuery();
+	            System.out.println("Hauek dira " + taldeIzen + " taldeak egiten dituen girak eta lekuak:");
+	            boolean daude=false;
+	            while(rs.next()){
+	            	daude=true;
+	                System.out.println(rs.getString(1)+" "+rs.getString(2)+" "+rs.getString(3)+" "+rs.getString(4)+" "+rs.getFloat(5)+"€");
+	            }
+	            if(daude) {
+	            	do {
+	            		try {
+	            			System.out.println("Aukeratu horietako bat: ");
+	    	 	            System.out.println("Sartu hasiera data (UUUU-HH-EE formatuan): ");
+	    	 	            String hasData = konprobatuDataFormatua(br.readLine());
+	    	 	            System.out.println("Sartu herrialdearen izena: ");
+	    	 	            String herrialdea = br.readLine();
+	    	 	            System.out.println("Sartu hiriaren izena: ");
+	    	 	            String hiria = br.readLine();
+	    	 	            System.out.println("Sartu lekuaren izena: ");
+	    	 	            String lekuIzen = br.readLine();
+	    	 	            System.out.println("Sartu erosi nahi dituzun sarrera kopurua: ");
+	    	 	            int kop = Integer.parseInt(br.readLine());
+	    	 	            PreparedStatement ps2 = konexioa.prepareStatement("SELECT * FROM Lekuan_jo WHERE Herrialdea = ? AND Hiria = ? AND izena = ? AND hasData= ?");
+	    	 	           ps2.setString(1, herrialdea);
+	    	 	           ps2.setString(2, hiria);
+	    	 	           ps2.setString(3, lekuIzen);
+	    	 	           ps2.setString(4, hasData);
+	    	    			ResultSet rs2 = ps2.executeQuery();
+	    	        
+	            			if(rs2.next()) {
+	            				saiakera = 3; 
+	            				sarrerakEguneratu(kop, hasData, herrialdea,hiria, lekuIzen);
+		    	 	            System.out.println("Erosketa zuzen burutu da.");
+	            			}else System.out.println("Sartutako gira ez dago emandako aukeren artean, saiatu berriz ere.");
+	        			} catch (Exception e) {
+	        				salbuespenaTratatu(e);
+	        			}
+	            		saiakera++;
+	        		} while (saiakera < 3);
+	            }else {System.out.println("Ez daude " + taldeIzen + " taldearen girak eskuragarri, bilatu beste talde batenak.");}
+	            saiakera=3;
+    		}catch(Exception e) {
     			salbuespenaTratatu(e);
     		}
     		saiakera++;
