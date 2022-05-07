@@ -43,6 +43,7 @@ public class DB {
     	int aukera=-1;
     	try {
         	while(aukera!=0){
+            	System.out.println("\n\n");
                 System.out.println("  __  __ ______ _   _ _    _         \r\n"
                 		+ " |  \\/  |  ____| \\ | | |  | |  /\\    \r\n"
                 		+ " | \\  / | |__  |  \\| | |  | | /  \\   \r\n"
@@ -55,10 +56,9 @@ public class DB {
                 System.out.println("2.- Datuak aldatu edo ezabatu.");
                 System.out.println("3.- Kontsultak egin.");
                 System.out.println("0.- Irten.");
-                System.out.println("\n\nAukera bat sartu: ");
+                System.out.println("\nAukera bat sartu: ");
                 aukera = Integer.parseInt(br.readLine());
                 if(aukera==1 || aukera==2) {
-                	System.out.println("Pasahitza sartu behar duzu datuak kudeatzeko. ");
                 	boolean ondo = this.pasahitzaZuzenaDa();
                 	if(ondo && aukera==1) datuakSartzekoMenua();
                 	else if(ondo && aukera==2) datuakAldatzekoMenua();
@@ -75,7 +75,7 @@ public class DB {
     private void datuakSartzekoMenua() {
     	int aukera = -1;
         try {
-           
+        	System.out.println("\n\n");
             System.out.println("1.- Produktore berria sartu.");
             System.out.println("2.- Talde berriak sartu.");
             System.out.println("3.- Disko berria sartu.");
@@ -92,7 +92,7 @@ public class DB {
     private void datuakAldatzekoMenua() {
     	int aukera = -1;
         try {
-            
+        	System.out.println("\n\n");
             System.out.println("1.- Giraren bukera eta hasiera datak aldatu.");
             System.out.println("2.- Talde bat kaleratu.");
             System.out.println("3.- Girako hiriak kendu.");
@@ -107,6 +107,7 @@ public class DB {
     	int aukera = -1;
     	boolean ondo=false;
         try {
+        	System.out.println("\n\n");
             System.out.println("1.- Talde baten gira guztiak lortu.");
             System.out.println("2.- Talde baten gira bateko hiri guztiak sarreraren prezioarekin.");
             System.out.println("3.- Talde baten disko baten abesti guztiak.");
@@ -118,7 +119,7 @@ public class DB {
             System.out.println("\n\nAukera gehiago ikusteko pasahitza sartu nahi duzu? (B/E)");
             String erabaki=br.readLine();
             if(erabaki.equalsIgnoreCase("b")) {
-            	ondo=this.pasahitzaZuzenaDa();
+            	ondo = this.pasahitzaZuzenaDa();
             	System.out.println("1.- Talde baten gira guztiak lortu.");
         		System.out.println("2.- Talde baten gira bateko hiri guztiak sarreraren prezioarekin.");
                 System.out.println("3.- Talde baten disko baten abesti guztiak.");
@@ -228,6 +229,9 @@ public class DB {
     
     
     //************************************************INSERT************************************************************
+    /**
+     * Datu basean produktore berria sartzeko erabiliko da.
+     */
     private void produktoreBerriaSartu() {
     	int saiakera=0;
     	do {
@@ -254,19 +258,17 @@ public class DB {
 
     /**
      * Talde berri bat sartuko da datu-basean. Talde hori sartzen denean, hainbat partaide sartuko ahal dira talde horren barruan.
-     * @throws SQLException
-     * @throws IOException
-     * @throws NumberFormatException
      */
     private void taldeakSartu() {
     	int saiakera = 0,kode =0;
     	boolean ondo = false;
     	String partaideak = null;
+    	String taldeIzena = null;
+    	//Taldea sartzeko:
     	do{
 			try {
-				//Taldea sartzeko:
 		    	System.out.println("Sartu taldearen izena: ");
-		    	String izena = stringEgokiaDa(br.readLine(), 15);
+		    	taldeIzena = stringEgokiaDa(br.readLine(), 15);
 				System.out.println("Sartu taldearen kodea: ");
 				kode = Integer.parseInt(br.readLine());
 				System.out.println("Sartu taldearen deskribapena: ");
@@ -275,10 +277,11 @@ public class DB {
 				int pKode = Integer.parseInt(br.readLine());
 				PreparedStatement ps = konexioa.prepareStatement("INSERT INTO TALDE VALUES(?, ?, ?, ?)");
 				ps.setInt(1,kode);
-				ps.setString(2,izena);
+				ps.setString(2,taldeIzena);
 		    	ps.setString(3, desk);
 		    	ps.setInt(4, pKode);
 		    	ps.executeUpdate();
+		    	System.out.println("'" + taldeIzena + "' taldea datu basean kargatu da.");
 		    	ondo = true;
 		    	System.out.println("Partaideak sartu nahi dituzu? (B/E)");
 		    	partaideak = br.readLine();
@@ -303,6 +306,7 @@ public class DB {
     			    	ps.setInt(2,partKode);
     			    	ps.setInt(3, kode);
     			    	ps.executeUpdate();
+    			    	System.out.println("'"+ pIzen + "' partaidea '" + taldeIzena + "' taldearen barruan kargatu da.");
     					System.out.println("Partaide gehiagorik sartu nahi duzu? (B/E)");
     					hizki = br.readLine();
         			} while(hizki.equalsIgnoreCase("B"));
@@ -316,53 +320,74 @@ public class DB {
     	
     }
 
+    /**
+     * Datu basearen talde bati disko bat sartzeko erabliliko da. Gainera, disko horren barruan abestiak sartzeko aukera emango du.
+     */
     private void diskoBerriaSartu() {
     	int saiakera=0;
+    	boolean ondo = false;
+    	String abestiak = null;
+    	int kode = 0;
+    	String diskoIzen = null;
+    	//Diskoa sartzeko:
     	do {
     		try {
     			System.out.println("Sartu disko izen bat: ");
-    	    	String izen = br.readLine();
+    	    	diskoIzen = stringEgokiaDa(br.readLine(),15);
     	    	System.out.println("Sartu disko kode bat: ");
-    	    	int kode = Integer.parseInt(br.readLine());
+    	    	kode = Integer.parseInt(br.readLine());
     	    	System.out.println("Sartu disko prezio bat: ");
     	    	float prezio = Float.parseFloat(br.readLine());
     	    	System.out.println("Sartu talde baten kodea: ");
     	    	int talKode = Integer.parseInt(br.readLine());
     	    	PreparedStatement ps = konexioa.prepareStatement("INSERT INTO DISKO VALUES(?, ?, ?, 0, ?)");
-    	    	ps.setString(1, izen);
+    	    	ps.setString(1, diskoIzen);
     	    	ps.setInt(2, kode);
     	    	ps.setFloat(3, prezio);
     	    	ps.setInt(4, talKode);
     	    	ps.executeUpdate();
-    	    	String erantzun;
-    	    	int kont = 0;
-    	    	do{
-    	    		kont++; 
-    	    		System.out.println("Sartu abesti izen bat: ");
-    	    		String izena = br.readLine();
-    	    		PreparedStatement psa = konexioa.prepareStatement("INSERT INTO ABESTIA VALUES(?, ?, ?)");
-    	    		psa.setString(1, izena);
-    	    		psa.setInt(2,kont);
-    	    		psa.setInt(3, kode);
-    	    		psa.executeUpdate();
-    	    		System.out.println("Sartu berri duzun disko horretan abesti berriak sartu nahi dituzu? (B/E)");
-    	    		erantzun = br.readLine();
-    	    	} while(erantzun.equalsIgnoreCase("B"));
-    			saiakera=3;
+	    		System.out.println("'" + diskoIzen + "' diskoa datu basean kargatu da.");
+	    		ondo = true;
+		    	System.out.println("Abestiak sartu nahi dituzu? (B/E)");
+		    	abestiak = br.readLine();
     		}
     		catch(Exception e) {
     			salbuespenaTratatu(e);
-    		}
+    		}	
     		saiakera++;
-    	}while(saiakera<3);
-    	
-    }
-
+    	}while(saiakera<3 && !ondo);
+    	//Abestiak sartzeko:
+    	if(ondo && abestiak.equalsIgnoreCase("B")) {
+    		saiakera = 0;
+	    	int kont = 1;
+	    	do {
+	    		String erantzun;
+	    		try {
+	    			do{
+	    	    		System.out.println("Sartu abesti izen bat: ");
+	    	    		String izena = stringEgokiaDa(br.readLine(),15);
+	    	    		PreparedStatement psa = konexioa.prepareStatement("INSERT INTO ABESTIA VALUES(?, ?, ?)");
+	    	    		psa.setString(1, izena);
+	    	    		psa.setInt(2,kont);
+	    	    		psa.setInt(3, kode);
+	    	    		psa.executeUpdate();
+	    	    		kont++; 
+	    	    		System.out.println("'" + izena + "' abestia '" + diskoIzen +"' dikoaren barruan kargatu da.");
+	    	    		System.out.println("Sartu berri duzun disko horretan abesti berriak sartu nahi dituzu? (B/E)");
+	    	    		erantzun = br.readLine();
+	    	    	} while(erantzun.equalsIgnoreCase("B"));
+	    			saiakera = 3;
+	    		} catch(Exception e) {
+        			salbuespenaTratatu(e);
+        		}
+	    		saiakera++;
+	    	}while(saiakera<3);
+    	}	
+    }	
+    
     /**
      * Talde bati gira berri bat sartuko zaio. Behin gira hori sartu dela, gira horren barruan hiriak eta lekuak sartu nahi diren eskatuko da.
      * Hiri eta leku berriak sartu nahi badira, "girarenHiriakSartu" metodoari dei egingo zaio.
-     * @throws SQLException 
-     * @throws IOException
      */
     private void giraBerriakSartu() {
     	int saiakera=0;
@@ -393,9 +418,6 @@ public class DB {
     
     /**
      * 
-     * @throws SQLException
-     * @throws IOException
-     * @throws NumberFormatException
      */
     private void girarenLekuakSartu(String hData, int tKode) {
 		int saiakera=0;
@@ -452,9 +474,6 @@ public class DB {
   //************************************************UPDATE************************************************************
     /**
      * Gira bateko datetan arazoak egonda hauek aldatuko dira:
-     * @throws IOException
-     * @throws SQLException
-     * @throws NumberFormatException
      */
     private void girarenBukHasDatakAldatu(){
     	int saiakera=0;
@@ -543,8 +562,6 @@ public class DB {
   //************************************************DELETE************************************************************
     /**
      * Talde baten kodea sartuta, talde hori datu basetik aterako da. Dependentzia guztiak "ON DELETE CASCADE" jarrita daudenez, hauek ere ezabatuko dira.
-     * @throws IOException
-     * @throws SQLException
      */
     private void taldeaKaleratu(){
     	int saiakera=0;
@@ -566,8 +583,6 @@ public class DB {
 
     /**
      * Erabiltzaileari datu basetik girako bateko zenbait hiri ezabatzeko aukera emango zaio.
-     * @throws IOException
-     * @throws SQLException
      */
     private void lekuakGiratikKendu() {
     	int saiakera=0;
@@ -997,7 +1012,7 @@ public class DB {
     	int saiakera=0;
     	do {
     		try {
-    			System.out.println("Pasahitza sartu: ");
+    			System.out.println("Pasahitza sartu behar duzu datuak kudeatzeko. Pasahitza sartu: ");
             	int p= Integer.parseInt(br.readLine());
             	if (p==pasahitza) return true;
             	else System.out.println("Pasahitza okerra da.");
@@ -1052,12 +1067,11 @@ public class DB {
     		eaux.mezuaInprimatu();
     	}
     	else if(e instanceof NumberFormatException) {
-    		//NumberFormatException eaux = (NumberFormatException) e;
     		System.out.println("Zenbakia ez den zeozer sartu duzu edo zenbakia handiegia da."); 
     	}
     	else if(e instanceof SQLException) {
     		SQLException eaux = (SQLException) e; 
-    		System.out.println("ERRORE BAT SUERTATU DA DATU BASEAREKIN");
+    		System.out.print("ERRORE BAT SUERTATU DA DATU BASEAREKIN: ");
     		System.out.println(eaux.getMessage());
     		//System.out.println(eaux.getErrorCode());
     		//if (eaux.getErrorCode()==1062) System.out.println("Kode hori duen produktorea existitzen da.");
