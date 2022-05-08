@@ -503,6 +503,7 @@ public class DB {
     	int saiakera=0;
     	int kodea = 0;
     	String data = null;
+    	boolean giraAurkituDa = false;
     	do {
     		try {
     			System.out.println("Aldatu nahi duzun girak egiten duen taldearen KODEA adierazi: ");
@@ -513,7 +514,10 @@ public class DB {
     			ps.setString(1, data);
     			ps.setInt(2, kodea);
     			ResultSet rs = ps.executeQuery();
-    			if(rs.next()) saiakera = 3;
+    			if(rs.next()) {
+    				saiakera = 3;
+    				giraAurkituDa = true;
+    			}
     			else System.out.println("Gira hori ez da existitzen.");
 			} catch (Exception e) {
 				salbuespenaTratatu(e);
@@ -521,7 +525,7 @@ public class DB {
     		saiakera++;
 		} while (saiakera < 3);
     	
-	    do{
+	    if (giraAurkituDa) do{
 	    	try{
 	        	System.out.println("Hasiera data aldatu nahi duzu? Horrela bada sakatu 'B' hizkia, bestela sakatu beste bat.");
 	        	if(br.readLine().equalsIgnoreCase("B")) {
