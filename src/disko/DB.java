@@ -834,7 +834,7 @@ public class DB {
 		            if(!rs.next()) System.out.println("Ez daude talderik sartu duzun taldearen produktore berarekin");
 		            else {
 			            System.out.println("Hauek dira talde honen produktorea konpartitzen duten taldeak:\n");
-		            	System.out.println(rs.getString(1));
+		            	System.out.println(rs.getString(1)); 
 			            while(rs.next()){
 			                System.out.println(rs.getString(1));
 			            }
