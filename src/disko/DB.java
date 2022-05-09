@@ -777,6 +777,7 @@ public class DB {
 		} while (saiakera < 3);
     	
 	    if(ondo) {
+	    	saiakera=0;
 	    	do{
 		    	try{
 
@@ -808,6 +809,7 @@ public class DB {
     }
 
     private void diskoenPrezioakErakutsi() {
+    	boolean ondo=false;
     	int saiakera=0;
     	do {
     		try {
@@ -820,9 +822,11 @@ public class DB {
     	        ps.setString(1, taldeIzen+"%");
     	        ResultSet rs = ps.executeQuery();
     	        while(rs.next()){
+    	        	ondo=true;
     	            System.out.println(rs.getString(1) + "\t" +rs.getString(2) + " " + rs.getFloat(3)+"€");
     	        }
-    			saiakera=3;
+    	        if(ondo)saiakera=3;
+    	        else System.out.println("Ez da taldea existitzen.");
     		}
     		catch(Exception e) {
     			salbuespenaTratatu(e);
@@ -1091,6 +1095,7 @@ public class DB {
 	            	saiakera=3;
 	                System.out.println(rs.getString(1)+"\t"+rs.getString(2));
 	            }
+	            if(!daude)System.out.println("Ez dago talderik izen horrekin, saiatu berriro.");
 			}catch(Exception e) {
     			salbuespenaTratatu(e);
     		}
