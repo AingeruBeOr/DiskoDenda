@@ -68,6 +68,7 @@ public class DB {
 
             konexioa.close();
             System.out.println("Agur!");
+            System.exit(0);
         }catch(Exception e) {
         	salbuespenaTratatu(e);
         }
@@ -115,8 +116,8 @@ public class DB {
             System.out.println("4.- Talde baten disko guztien prezioak.");
             System.out.println("5.- Talde bat adierazi, produktore bera erabiltzen duten taldeak lortu.");
             System.out.println("6.- Abestiak zenbakiaren arabera ordenatu.");
-            System.out.println("7.- Sarrera erosi:");
-            System.out.println("8.- Diskoa erosi:");
+            System.out.println("7.- Sarrera erosi.");
+            System.out.println("8.- Diskoa erosi.");
             System.out.println("\n\nAukera gehiago ikusteko pasahitza sartu nahi duzu? (B/E)");
             String erabaki=br.readLine();
             if(erabaki.equalsIgnoreCase("b")) {
