@@ -67,10 +67,10 @@ public class DB {
             }
 
             konexioa.close();
+            System.out.println("Agur!");
         }catch(Exception e) {
         	salbuespenaTratatu(e);
         }
-        menuPrintzipala();
     }
     
     private void datuakSartzekoMenua() {
