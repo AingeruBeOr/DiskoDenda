@@ -52,7 +52,7 @@ public class DB {
                 		+ " | |  | | |____| |\\  | |__| / ____ \\ \r\n"
                 		+ " |_|  |_|______|_| \\_|\\____/_/    \\_\\\r\n"
                 		+ "                                     \r\n"
-                		+ "                                    ");
+                		+ "                                    "); 
                 System.out.println("1.- Datuak sartu.");
                 System.out.println("2.- Datuak aldatu edo ezabatu.");
                 System.out.println("3.- Kontsultak egin.");
