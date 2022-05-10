@@ -68,6 +68,7 @@ public class DB {
 
             konexioa.close();
             System.out.println("Agur!");
+            Thread.sleep(1500);
             System.exit(0);
         }catch(Exception e) {
         	salbuespenaTratatu(e);
